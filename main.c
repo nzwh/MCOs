@@ -1,16 +1,30 @@
 #include "functions.h"
-#define PL 5
 
 int main(void) {
-
+    
     int length = 10, height = 10;
+    int playerCount;
+
+    // initializes player position
+    int p_1, p_2, p_3, p_4, p_5;
+    /* int p[LM]; */
+
     srand(time(0));
+
+
+
+    // * printing
 
     printf("\n\n");
     printBoard(length, height);
     printf("\n\n");
 
-    printf("\tTest roll: %d \n\n", playerSequence(PL));
-    
-    return 0;
+    printf("\tPlayer Sequence roll: %d\n", playerSequence(5));
+
+    int loc;
+    printf("\tEnter board location: ");
+    scanf("%d", &loc);
+
+    int new_loc = newLocation(3, 3, loc);
+    printf("\tThe new location is: %d\n", new_loc);
 }
