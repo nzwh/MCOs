@@ -2,7 +2,20 @@
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
+#include <conio.h>
+#include <unistd.h>
+#include <string.h>
+
 #define LM 5
+
+#define KNRM  "\x1B[0m"
+#define KRED  "\x1B[31m"
+#define KGRN  "\x1B[32m"
+#define KYEL  "\x1B[33m"
+#define KBLU  "\x1B[34m"
+#define KMAG  "\x1B[35m"
+#define KCYN  "\x1B[36m"
+#define KWHT  "\x1B[37m"
 
 void printBoard(int length, int height) {
 
@@ -58,6 +71,15 @@ int playerSequence(int limit) {
     return digit;
 }
 
+int rollDice() {
+    int dice_a = rand() % 10;
+    int dice_b = rand() % 10;
+
+    printf("\tRolling: [%d] [%d]\n", dice_a, dice_b);
+
+    return dice_a + dice_b;
+}
+
 // only if obstacle roll is >= 5, includes special 3-3 quirk
 int newLocation(int dice_a, int dice_b, int position) {
 
@@ -69,7 +91,7 @@ int newLocation(int dice_a, int dice_b, int position) {
         if (position > 70) // row 8
             new_pos = 99;
         else {
-            // algorithm to grab the location three rows above
+            // algorithm to grab the box three rows above
             new_pos = ((position/10)+3)*10 + (11-(position%10));
             if (position%10 == 0) new_pos -= 20;
         }
@@ -79,4 +101,11 @@ int newLocation(int dice_a, int dice_b, int position) {
         position += dice_a + dice_b;
 
     return position;
+}
+
+void gradualPrint(int speed, char s[]) {
+    for (int i = 0; i < strlen(s); i++) {
+        printf("%c", s[i]);
+        usleep(speed);
+    }
 }

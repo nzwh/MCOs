@@ -1,8 +1,8 @@
 #include "functions.h"
 
 int main(void) {
-    
-    int length = 10, height = 10;
+
+    int length = 10, height = 10, c;
     int playerCount;
 
     // initializes player position
@@ -10,8 +10,6 @@ int main(void) {
     /* int p[LM]; */
 
     srand(time(0));
-
-
 
     // * printing
 
@@ -27,4 +25,9 @@ int main(void) {
 
     int new_loc = newLocation(3, 3, loc);
     printf("\tThe new location is: %d\n", new_loc);
+
+    int move = rollDice();
+    gradualPrint(5*10000, "\tTest sentence.\t");
+    scanf("%d", &c);
+
 }
