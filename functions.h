@@ -71,22 +71,31 @@ int playerSequence(int limit) {
     return digit;
 }
 
-int rollDice() {
-    int dice_a = rand() % 10;
-    int dice_b = rand() % 10;
+int rollDice(int dice_a, int dice_b, int position) {
 
-    printf("\tRolling: [%d] [%d]\n", dice_a, dice_b);
+    int dice_t;
 
-    return dice_a + dice_b;
+    // rolls one dice if the position is on the 10th row
+    if (position >= 90) 
+        dice_t = dice_a + dice_b;
+    else
+        dice_t = dice_a;
+    
+    printf("\tRolling: [%d]\n", dice_t);
+    return dice_t;
 }
 
-// only if obstacle roll is >= 5, includes special 3-3 quirk
-int newLocation(int dice_a, int dice_b, int position) {
+// special 3-3 and 5-5 quirk, returns new position
+int spcLocation(int position) {
+
+    // todo: implement rollDice()
+    int dice_a = rand() % 10;
+    int dice_b = rand() % 10;
 
     // returns the new location
     int add_turn = 0, new_pos;
 
-    // special case
+    // special case 3
     if (dice_a == 3 && dice_b == 3) {
         if (position > 70) // row 8
             new_pos = 99;
@@ -97,6 +106,7 @@ int newLocation(int dice_a, int dice_b, int position) {
         }
         position = new_pos;
     } 
+    // special case 5
     else if (dice_a != 5 && dice_b != 5) 
         position += dice_a + dice_b;
 
