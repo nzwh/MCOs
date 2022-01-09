@@ -17,9 +17,20 @@
 #define KCYN  "\x1B[36m"
 #define KWHT  "\x1B[37m"
 
-void printBoard(int length, int height) {
+int checkPlayer(int location, int arr[], int size) {
 
-    int location = 0;
+    int check = 0;
+    for (int i = 0; i < size; i++) {
+        if (arr[i] == location) {
+            printf("| P%02d |", i+1);
+            check = 1;
+        }
+    }
+    
+    return check;
+}
+
+void printBoard(int length, int height, int arr[], int size) {
 
     // create board
     for(int i = 1; i <= height; i++) {
@@ -27,70 +38,171 @@ void printBoard(int length, int height) {
         printf("\t");
         if (i%2 == 0) {
             for(int j = 1; j <= length; j++) 
-                if (location == length*height-(i*10)+j) printf("|     |");
-                else printf("| %3d |", length*height-(i*10)+j);
+                if(!checkPlayer(length*height-(i*10)+j, arr, size))
+                    printf("| %3d |", length*height-(i*10)+j);
         } else {
             for(int j = length; j >= 1; j--) 
-                if (location == (10-i)*10+j) printf("|     |");
-                else printf("| %3d |", (10-i)*10+j);
+                if (!checkPlayer((10-i)*10+j, arr, size))
+                    printf("| %3d |", (10-i)*10+j);
         }
         printf("\n\n");
     }
 }
 
-int isUnique(int check, int digit, int limit) {
+int isUnique(int check, int digit) {
 
-    // note: if arrays are allowed, implement an array check function for isUnique() instead.
-    if (check != digit%10 && check != (digit/10)%10 && check != (digit/100)%10 
-    && check != (digit/1000)%10 && check != digit/10000)
-        return 1;
-    else    
-        return 0;
+    // returns true if the digit does not contains variable "check".
+    for(; digit > 0; digit /= 10) 
+        if (check == digit%10) return 0;
+    return 1;
 }
 
+/* given the limit 'n', get an 'n' digit number with unique digits from 1 to 'n'. */
 int playerSequence(int limit) {
 
-    int digit = 0, temp = 0, exit = 0;
-    for (int i = 1; i <= limit; i++) {
-        temp = (rand()%limit)+1;
-        
-        if (digit == 0) 
-            digit += temp * pow(10, i-1);
-        else if (digit > 0) {
-            while (!exit) {
-                if (isUnique(temp, digit, limit)) {
-                    digit += temp * pow(10, i-1);
-                    exit = 1;
-                }
-                else temp = (rand()%limit)+1;
-            }
-        }
-        exit = 0;
-    }
+    int digit = 0, temp = 0;
+    for (int i = 1, p = 1; i <= limit; i++, p *= 10) {
 
+        do temp = (rand()%limit)+1;
+        while (!isUnique(temp, digit));
+        digit += temp * p;
+    }
     return digit;
 }
 
-int rollDice(int dice_a, int dice_b, int position) {
+int getPosition(int position, int dice_a, int dice_b) {
 
     int dice_t;
 
     // rolls one dice if the position is on the 10th row
     if (position >= 90) 
-        dice_t = dice_a + dice_b;
-    else
         dice_t = dice_a;
+    else
+        dice_t = dice_a + dice_b;
     
-    printf("\tRolling: [%d]\n", dice_t);
+    printf("Rolling: [%d]\n", dice_t);
     return dice_t;
 }
 
-// special 3-3 and 5-5 quirk, returns new position
-int spcLocation(int position) {
+int isWin(int arr[], int size) {
+    for (int i = 0; i < size; i++) 
+        if(arr[i] == 100) return 1;
+    return 0;
+}
 
-    // todo: implement rollDice()
-    int dice_a = rand() % 10;
-    int dice_b = rand() % 10;
+// covert to pointer
+int overflow(int position) {
+    if (position > 100) 
+        position = 200 - position;
+    return position;
+}
+
+int getQuirk(int p_pos, int position) {
+
+    printf("\tOld Position: %d, New Position %d \n", p_pos, position);
+
+    int quirk = (rand()%10)+1;
+
+    int new_pos, n_row = 0, n_col = 0;
+    int x_row = 0, x_col = 0;
+    int dig_o = position%10, dig_t = position/10;
+
+    if (quirk == 4) 
+        position -= (position - p_pos);
+    else if (quirk < 4) {
+        switch (quirk) {
+            case 1: 
+                // doggos: any tile greater or less
+
+                // ??? kinda working ??? i haven't tested it that much yet 
+                // * update 01/07/22 0145: it works ?? my head hurts (literally)
+
+                // randomizes the row and column
+                n_row = (rand()%10)+1;
+                n_col = (rand()%10)+1;
+
+                break;
+
+            case 2:
+                // ladder
+
+                // * update 01/07/22 0200: works fine for the most part
+                // * update 01/08/22 0215: works !! i think (lol)
+
+                n_row = dig_t;
+                if (position % 20 != 0)
+                    n_row++;
+                n_row = (rand()% (11-n_row)) + n_row;
+
+                // weird complex stuff i forgor about
+                if (n_row == dig_t+1) {
+                    if (dig_o == 0 && n_row < 10) {
+                        n_row++;
+                        n_col = (rand()%10)+1;  
+                    }
+                    else {
+                        if (n_row%2 == 1) 
+                            n_col = (rand()%(10-dig_o)) + dig_o + 1;
+                        else 
+                            n_col = (rand()%(10-dig_o)) + 1;
+                    }
+                }
+                else
+                    n_col = (rand()%10)+1;
+
+                break;
+                
+            case 3:
+                // snake
+
+                // rolling for row
+                n_row = dig_t;
+                if(position % 20 != 0)
+                    n_row++;
+                n_row = (rand()%n_row)+1;
+
+                // weird complex stuff i forgor about
+                // ?? 01/07/22 0256 working kinda, haven't checked case '11' yet
+                // ** 01/08/22 0102 case 11 works as expected
+
+                if (n_row == dig_t+1) {
+                    if (dig_o == 1 && n_row > 1) {
+                        n_row--;  // this is so brute forced
+                        n_col = (rand()%10)+1;  
+                    }
+                    else {
+                        if (n_row%2 == 0) 
+                            n_col = (rand()%(dig_o-1)) + (11-dig_o) + 1;
+                        else 
+                            n_col = (rand()%(dig_o-1)) + 1;
+                    }
+                }
+                else
+                    n_col = (rand()%10)+1;
+
+                break;
+        }
+
+        // if the row is on an even number, reverse the digit
+        if (n_row % 2 == 0) 
+            x_col = 11 - n_col;
+        else    
+            x_col = n_col;
+
+        // subtract 1 to calculate for tenth's of the location
+        x_row = n_row-1;
+
+        position = x_row*10 + x_col;
+    }
+
+    printf("\tQuirk: %d Row: %d Column: %d New Position: %d", quirk, n_row, n_col, position);
+
+    return position;
+}
+
+// check this first before the quirk
+// special 3-3 and 5-5 quirk, returns new position
+int spcLocation(int position, int dice_a, int dice_b) {
 
     // returns the new location
     int add_turn = 0, new_pos;
@@ -104,13 +216,32 @@ int spcLocation(int position) {
             new_pos = ((position/10)+3)*10 + (11-(position%10));
             if (position%10 == 0) new_pos -= 20;
         }
-        position = new_pos;
+        position = new_pos - position;
     } 
-    // special case 5
-    else if (dice_a != 5 && dice_b != 5) 
-        position += dice_a + dice_b;
+    // special case 5: none
 
     return position;
+}
+
+// moves to the new position
+int rollDice(int position) {
+
+    // todo: implement rollDice()
+    int dice_a = (rand()%10)+1;
+    int dice_b = (rand()%10)+1;
+
+    int new_pos;
+
+    printf("\t[%d][%d]  ", dice_a, dice_b);
+
+    if ((dice_a == 3 && dice_b == 3) ||
+        (dice_a == 5 && dice_b == 5)) {
+        new_pos = spcLocation(position, dice_a, dice_b);
+    } else {
+        new_pos = getPosition(position, dice_a, dice_b);
+    }
+
+    return position + new_pos;
 }
 
 void gradualPrint(int speed, char s[]) {
@@ -118,4 +249,6 @@ void gradualPrint(int speed, char s[]) {
         printf("%c", s[i]);
         usleep(speed);
     }
+
+    printf("\b"); // erases a character
 }
