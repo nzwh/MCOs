@@ -22,28 +22,22 @@ int main(void) {
         }
 
         // initializes player position
-        int py[pSize], pp[pSize]; // stores old location;
+        int py[pSize], pp[pSize];
         for (int i = 0; i < pSize; i++) 
             py[i] = 0;
 
-        printf("\tLocations: ");
-        for (int j = 0; j < pSize; j++) 
-            printf("P%d: %d  ", j+1, py[j]);
-
-        int pSequence = playerSequence(pSize);
-        printf("\tPlayer Sequence roll: %d\n", pSequence);
-
-        // inverse sequence
-        int iSequence = 0;
-        for (; pSequence != 0; pSequence /= 10, iSequence *= 10)
-            iSequence += pSequence % 10;
-
-        iSequence /= 10;
-        printf("\tInverse Sequence roll: %d\n", iSequence);
-
-        printf("\n\n");
-
         do {
+
+            int pSequence = playerSequence(pSize);
+            printf("\tPlayer Sequence roll: %d\n", pSequence);
+
+            // inverse sequence
+            int iSequence = 0;
+            for (; pSequence != 0; pSequence /= 10, iSequence *= 10)
+                iSequence += pSequence % 10;
+            iSequence /= 10;
+
+            printf("\n\n");
             pStruct = iSequence;
 
             // game start
@@ -62,7 +56,7 @@ int main(void) {
 
                 // getting quirk
                 pp[pCurrent] = getQuirk(py[pCurrent], pp[pCurrent]);
-                printf("\tQuirk Location: %d\n\n", pp[pCurrent]);
+                printf("\tNew Location: %d\n\n", pp[pCurrent]);
                 pp[pCurrent] = overflow(pp[pCurrent]);
 
                 printf("\n\n");
@@ -72,6 +66,7 @@ int main(void) {
                 
             }
 
+            getch();
             // prints location of the round
             for (int i = 0; i < pSize; i++) 
                 printf("\tPlayer %d: %d", i+1, py[i]);
@@ -83,43 +78,6 @@ int main(void) {
             printf("\n\n\n\n\n");
 
         } while(!isWin(py, pSize));
-
-
-
-
-        // game start
-        // print board
-        // roll dice with animation
-        // cog chooser for quirk
-        // do quirk with animation
-
-        // next player
-        // ... end
-        // winner splashscreen
-        // display results
-        // back to main menu
-        
-
-        // * printing
-        /*
-                player n start !
-                roll the dice -> move to new position
-                roll the dice -> determine 
-                    if doggo
-                    if ladder
-                    if snake
-                    if uturn
-                    if 5-5
-                    if 3-3
-                next player
-        */
-
-        printf("\n\n");
-
-        /*
-        gradualPrint(5*10000, "\tTest sentence.\n");
-        scanf("%c", &c);
-        */
 
     } while (play);
 }

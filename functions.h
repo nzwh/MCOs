@@ -6,17 +6,13 @@
 #include <unistd.h>
 #include <string.h>
 
-#define LM 5
+/*  
+    Checks if a player is situated on a given tile. If so, 
+    print the player's number. If not, print the location.
 
-#define KNRM  "\x1B[0m"
-#define KRED  "\x1B[31m"
-#define KGRN  "\x1B[32m"
-#define KYEL  "\x1B[33m"
-#define KBLU  "\x1B[34m"
-#define KMAG  "\x1B[35m"
-#define KCYN  "\x1B[36m"
-#define KWHT  "\x1B[37m"
-
+    * Create instance for multiple players situated on a
+    * single tile. (ASCII Symbols)
+*/ 
 int checkPlayer(int location, int arr[], int size) {
 
     int check = 0;
@@ -26,13 +22,11 @@ int checkPlayer(int location, int arr[], int size) {
             check = 1;
         }
     }
-    
     return check;
 }
 
 void printBoard(int length, int height, int arr[], int size) {
 
-    // create board
     for(int i = 1; i <= height; i++) {
 
         printf("\t");
@@ -51,7 +45,7 @@ void printBoard(int length, int height, int arr[], int size) {
 
 int isUnique(int check, int digit) {
 
-    // returns true if the digit does not contains variable "check".
+    // returns true if the digit does not contains number "check".
     for(; digit > 0; digit /= 10) 
         if (check == digit%10) return 0;
     return 1;
@@ -75,10 +69,13 @@ int getPosition(int position, int dice_a, int dice_b) {
     int dice_t;
 
     // rolls one dice if the position is on the 10th row
-    if (position >= 90) 
+    if (position >= 90) {
         dice_t = dice_a;
-    else
+        printf("\t[%d]  ", dice_a);
+    } else {
         dice_t = dice_a + dice_b;
+        printf("\t[%d][%d]  ", dice_a, dice_b);
+    }
     
     printf("Rolling: [%d]\n", dice_t);
     return dice_t;
@@ -97,47 +94,35 @@ int overflow(int position) {
     return position;
 }
 
+enum { na, doggos, ladders, slides, uturns };
 int getQuirk(int p_pos, int position) {
 
-    printf("\tOld Position: %d, New Position %d \n", p_pos, position);
-
     int quirk = (rand()%10)+1;
-
     int new_pos, n_row = 0, n_col = 0;
     int x_row = 0, x_col = 0;
     int dig_o = position%10, dig_t = position/10;
 
-    if (quirk == 4) 
+    if (quirk == uturns) 
         position -= (position - p_pos);
-    else if (quirk < 4) {
+
+    else if (quirk < uturns) {
         switch (quirk) {
-            case 1: 
-                // doggos: any tile greater or less
+            case doggos: 
 
-                // ??? kinda working ??? i haven't tested it that much yet 
-                // * update 01/07/22 0145: it works ?? my head hurts (literally)
-
-                // randomizes the row and column
                 n_row = (rand()%10)+1;
                 n_col = (rand()%10)+1;
-
                 break;
 
-            case 2:
-                // ladder
-
-                // * update 01/07/22 0200: works fine for the most part
-                // * update 01/08/22 0215: works !! i think (lol)
-
+            case ladders:
+  
                 n_row = dig_t;
                 if (position % 20 != 0)
                     n_row++;
                 n_row = (rand()% (11-n_row)) + n_row;
 
-                // weird complex stuff i forgor about
                 if (n_row == dig_t+1) {
                     if (dig_o == 0 && n_row < 10) {
-                        n_row++;
+                        n_row++;  // this is so brute forced
                         n_col = (rand()%10)+1;  
                     }
                     else {
@@ -152,18 +137,12 @@ int getQuirk(int p_pos, int position) {
 
                 break;
                 
-            case 3:
-                // snake
+            case slides:
 
-                // rolling for row
                 n_row = dig_t;
                 if(position % 20 != 0)
                     n_row++;
                 n_row = (rand()%n_row)+1;
-
-                // weird complex stuff i forgor about
-                // ?? 01/07/22 0256 working kinda, haven't checked case '11' yet
-                // ** 01/08/22 0102 case 11 works as expected
 
                 if (n_row == dig_t+1) {
                     if (dig_o == 1 && n_row > 1) {
@@ -183,20 +162,16 @@ int getQuirk(int p_pos, int position) {
                 break;
         }
 
-        // if the row is on an even number, reverse the digit
         if (n_row % 2 == 0) 
             x_col = 11 - n_col;
         else    
             x_col = n_col;
 
-        // subtract 1 to calculate for tenth's of the location
         x_row = n_row-1;
-
         position = x_row*10 + x_col;
     }
 
     printf("\tQuirk: %d Row: %d Column: %d New Position: %d", quirk, n_row, n_col, position);
-
     return position;
 }
 
@@ -212,7 +187,7 @@ int spcLocation(int position, int dice_a, int dice_b) {
         if (position > 70) // row 8
             new_pos = 99;
         else {
-            // algorithm to grab the box three rows above
+            // algorithm to grab the tile three rows above
             new_pos = ((position/10)+3)*10 + (11-(position%10));
             if (position%10 == 0) new_pos -= 20;
         }
@@ -226,13 +201,10 @@ int spcLocation(int position, int dice_a, int dice_b) {
 // moves to the new position
 int rollDice(int position) {
 
-    // todo: implement rollDice()
     int dice_a = (rand()%10)+1;
     int dice_b = (rand()%10)+1;
 
     int new_pos;
-
-    printf("\t[%d][%d]  ", dice_a, dice_b);
 
     if ((dice_a == 3 && dice_b == 3) ||
         (dice_a == 5 && dice_b == 5)) {
