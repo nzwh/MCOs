@@ -31,7 +31,6 @@ int main(void) {
             int pSequence = playerSequence(pSize);
             printf("\tPlayer Sequence roll: %d\n", pSequence);
 
-            // inverse sequence
             int iSequence = 0;
             for (; pSequence != 0; pSequence /= 10, iSequence *= 10)
                 iSequence += pSequence % 10;
@@ -40,30 +39,30 @@ int main(void) {
             printf("\n\n");
             pStruct = iSequence;
 
-            // game start
             for(;pStruct != 0; pStruct /= 10, c = 0) {
-
-                // find alternative
-                getch();
-
-                int pCurrent = (pStruct%10)-1;
-                printf("\tCurrent Player: %d\n", pCurrent+1);
-
-                // roll location
-                pp[pCurrent] = rollDice(py[pCurrent]);
-                printf("\tNew Location: %d\n\n", pp[pCurrent]);
-                pp[pCurrent] = overflow(pp[pCurrent]);
-
-                // getting quirk
-                pp[pCurrent] = getQuirk(py[pCurrent], pp[pCurrent]);
-                printf("\tNew Location: %d\n\n", pp[pCurrent]);
-                pp[pCurrent] = overflow(pp[pCurrent]);
-
-                printf("\n\n");
-                // store new location into current
-                py[pCurrent] = pp[pCurrent];
-
                 
+                int pCurrent = (pStruct%10)-1;
+                if (py[pCurrent] != 100) {
+
+                    // find alternative
+                    getch();
+                    printf("\tCurrent Player: %d\n", pCurrent+1);
+
+                    // roll location
+                    pp[pCurrent] = rollDice(py[pCurrent]);
+                    printf("\tNew Location: %d\n\n", pp[pCurrent]);
+                    overflow(&pp[pCurrent]);
+
+                    // getting quirk
+                    pp[pCurrent] = getQuirk(py[pCurrent], pp[pCurrent]);
+                    printf("\tNew Location: %d\n\n", pp[pCurrent]);
+                    overflow(&pp[pCurrent]);
+
+                    printf("\n\n");
+                    // store new location into current
+                    py[pCurrent] = pp[pCurrent];
+
+                }
             }
 
             getch();

@@ -18,7 +18,7 @@ int checkPlayer(int location, int arr[], int size) {
     int check = 0;
     for (int i = 0; i < size; i++) {
         if (arr[i] == location) {
-            printf("| P%02d |", i+1);
+            printf("> P%02d <", i+1);
             check = 1;
         }
     }
@@ -87,14 +87,12 @@ int isWin(int arr[], int size) {
     return 0;
 }
 
-// covert to pointer
-int overflow(int position) {
-    if (position > 100) 
-        position = 200 - position;
-    return position;
+void overflow(int* position) {
+    if (*position > 100) 
+        *position = 200 - *position;
 }
 
-enum { na, doggos, ladders, slides, uturns };
+enum quirks_type { na, doggos, ladders, slides, uturns };
 int getQuirk(int p_pos, int position) {
 
     int quirk = (rand()%10)+1;
@@ -203,24 +201,22 @@ int rollDice(int position) {
 
     int dice_a = (rand()%10)+1;
     int dice_b = (rand()%10)+1;
-
     int new_pos;
 
     if ((dice_a == 3 && dice_b == 3) ||
-        (dice_a == 5 && dice_b == 5)) {
+        (dice_a == 5 && dice_b == 5)) 
         new_pos = spcLocation(position, dice_a, dice_b);
-    } else {
+    else
         new_pos = getPosition(position, dice_a, dice_b);
-    }
 
     return position + new_pos;
 }
 
 void gradualPrint(int speed, char s[]) {
+
     for (int i = 0; i < strlen(s); i++) {
         printf("%c", s[i]);
         usleep(speed);
     }
-
     printf("\b"); // erases a character
 }
