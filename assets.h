@@ -1,11 +1,12 @@
+// Libraries used
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 #include <math.h>
-#include <conio.h>
 #include <unistd.h>
 #include <string.h>
 
+// ANSI Escape Sequences (Colors)
 #define LBLK  "\x1B[30;1m"
 #define LRED  "\x1B[31;1m"
 #define LGRN  "\x1B[32;1m"
@@ -24,65 +25,104 @@
 #define KCYN  "\x1B[36m"
 #define KWHT  "\x1B[37m"
 
-#define BBLK  "\x1B[40m"
-#define BRED  "\x1B[41m"
-#define BGRN  "\x1B[42m"
-#define BYEL  "\x1B[43m"
-#define BBLU  "\x1B[44m"
-#define BMAG  "\x1B[45m"
-#define BCYN  "\x1B[46m"
-#define BWHT  "\x1B[47m"
-
 #define HBLD  "\x1B[1m"
 #define HUND  "\x1B[4m"
 #define HRVS  "\x1B[7m"
 
 #define KRST  "\x1B[0m"
 
-#define CAP 120
+// USleep Values
 #define FSCND 999999
 #define HSCND 500000
 #define MSCND 100000
 #define NSCND 50000
 
+// Terminal Width
+#define CAP 120
+
+// Quirk Limit
 #define QKLMT 5
 
+// * Formatting
+
+/*  
+    * Prints an animated ellipses given a delay.
+    Precondition: "delay" is a positive value in milliseconds.
+
+    @param delay is the number of milliseconds to wait.
+*/
 void prEllipses(int delay) {
+
     usleep(delay*3);
-    for(int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; i++) {
         printf(".");
         usleep(delay);
     }
 }
-/*  
-    Checks if a player is situated on a given tile. If so, 
-    print the player's number. If not, print the location.
 
-    * Create instance for multiple players situated on a
-    * single tile. (ASCII Symbols)
+/*  
+    * Prints a given string gradually with animation.
+    Precondition: "delay" is a positive value in milliseconds.
+
+    @param delay is the number of milliseconds to wait.
+    @param s[] is the string to be printed gradually.
+*/
+void gradualPrint(int delay, char s[]) {
+
+    for (int i = 0; i < strlen(s); i++) {
+        printf("%c", s[i]);
+        usleep(delay);
+        fflush(stdout);     // OnlineGDB Dependency
+    }
+}
+
+/*  
+    * Appends spaces to the start of a string to center it.
+    Precondition: "*text" is a string with a length less than "CAP".
+
+    @param *test is the string to be centered.
+*/
+void centerText(char *text) {
+    printf("%.*s%s \n", (int)((CAP/2) - (strlen(text)/2)), 
+        "                                                                              ", text);
+}
+
+// * End of Formatting
+// * Board Printing
+
+/*  
+    * Checks if a player is situated on a given tile. If so, 
+    * print the player's number. If not, print the location.
+    Preconditions: all values are within the valid bounds.
+
+    @param location is a tile on the board.
+    @param arr[] is an array of player locations.
+    @param size is the amount of players.
+    @param ranking_arr[] is an array of sorted indices of arr[].
+    @param g_arr[] is an array of player colors.
+    @return 1 (true) if there is player on the tile; false otherwise.
 */ 
 int checkPlayer(int location, int arr[], int size, int ranking_arr[], int g_arr[]) {
     
+    // Loop through all player locations
     int check = 0, occupant = 0, loc_arr[size];
     for (int i = 0; i < size; i++) {
 
-        // check if a player is on a specific tile
+        // If a player is on a specific tile
         if (arr[i] == location) {
             
-            // add the player into the loc_arr array
+            // Adds the player number into loc_arr[]
             loc_arr[occupant] = i;
             occupant++;
-            // return true if there is an occupant
+            // Return true
             check = 1;
         }
     }
 
-    // if a player occupies the specific tile
-    if (occupant == 1) {
-    
-        // print current player with their color
+    // If there is one occupant, print with color
+    if (occupant == 1)
         printf("\x1B[%d;1m" "|  P%d  |" KRST, g_arr[loc_arr[0]], loc_arr[0]+1);
-    } 
+    // If there are more than one occupants, print without color
     if (occupant == 2) 
         printf(KWHT "| P%dP%d |" KRST, loc_arr[0]+1, loc_arr[1]+1);
     if (occupant == 3) 
@@ -92,20 +132,37 @@ int checkPlayer(int location, int arr[], int size, int ranking_arr[], int g_arr[
     if (occupant == 5) 
         printf(KWHT "| FULL |" KRST);
 
+    // If the tile is 100, print FL [Finish Line] instead
     if (location == 100 && occupant == 0)
         printf(KWHT "|  FL  |" KRST);
 
     return check;
 }
+
+/*  
+    * Prints the right side portion of the board.
+    Preconditions: all values are within the valid bounds.
+
+    @param row is the row of the board.
+    @param round_num is the current number of rounds completed.
+    @param arr[] is an array of player locations.
+    @param size is the amount of players.
+    @param ranking_arr[] is an array of sorted indices of arr[].
+    @param new_arr[] is an array of sorted values of arr[].
+    @param g_arr[] is an array of player colors.
+*/ 
 void checkInstance(int row, int round_num, int arr[], int size, int ranking_arr[], int new_arr[], int g_arr[]) {
     
+    // Prints either a short or long divider depending on the row.
     if (row % 2 == 1) 
         printf("     %s|%s    ", LBLK, KRST);
     else if (row != 20)
         printf("                                                                                             %s|%s    ", LBLK, KRST);
 
+    // Print given the corresponding row number
     if (row == 2) printf(HBLD "[///] Round %02d:" KRST, round_num);
 
+    // Prints the player ranking
     if ((row >= 4 && row <= 8) && row-4 < size)
         printf("\x1B[%d;1m" "[0%d] " "\x1B[%d;1m" "P-%02d " "\x1B[%d;1m" "[T-%02d]" KRST, 
             g_arr[row-4], row-3, g_arr[ranking_arr[row-4]-1], ranking_arr[row-4], g_arr[row-4], new_arr[row-4]);
@@ -122,7 +179,14 @@ void checkInstance(int row, int round_num, int arr[], int size, int ranking_arr[
     printf("\n");
 }
 
-// *
+/*  
+    * Checks if the player already exists in the array.
+    Preconditions: ranking_arr[] is initialized as 0.
+
+    @param player is the current player number.
+    @param size is the amount of players.
+    @return 0 (false) if the player exists; true otherwise.
+*/ 
 int nonExisting(int ranking_arr[], int player, int size) {
 
     int check = 1;
@@ -131,14 +195,22 @@ int nonExisting(int ranking_arr[], int player, int size) {
     return check;
 }
 
-// compute ranking_arr
+/*  
+    * Computes for a sorted arr[] and sorted indices of arr[].
+    Preconditions: arr[] contains valid player locations.
+
+    @param arr[] is an array of player locations.
+    @param ranking_arr[] is an array of sorted indices of arr[].
+    @param new_arr[] is an array of sorted values of arr[].
+    @param size is the amount of players.
+*/ 
 void determineRank(int arr[], int* ranking_arr, int* new_arr, int size) {
 
-    // duplicate array into a new array
+    // Duplicate the values arr[] into new_arr[]
     for (int k = 0; k < size; k++) 
         new_arr[k] = arr[k];
     
-    // sort the new array into ascending
+    // Sort new_arr[] by ascending
     for (int i = 0; i < size; i++) {
     for (int j = i + 1; j < size; j++) {
         if (new_arr[j] > new_arr[i]) {
@@ -149,8 +221,7 @@ void determineRank(int arr[], int* ranking_arr, int* new_arr, int size) {
     }
     }
 
-    // ! re-sort
-    // get the indices based on original array from greatest
+    // Compares values of new_arr[] and arr[] and stores the index
     for (int i = 0; i < size; i++) {
     for (int j = 0; j < size; j++) 
         if (new_arr[i] == arr[j] && nonExisting(ranking_arr, j+1, size)) 
@@ -158,27 +229,41 @@ void determineRank(int arr[], int* ranking_arr, int* new_arr, int size) {
     }
 }
 
+/*  
+    * Prints the current state of the board.
+    Preconditions: all values are within the valid bounds.
+
+    @param length is the length of the board.
+    @param height is the height of the board.
+    @param arr[] is an array of player locations.
+    @param g_arr[] is an array of player colors.
+    @param size is the amount of players.
+    @param ranking_arr[] is an array of sorted indices of arr[].
+    @param new_arr[] is an array of sorted values of arr[].
+    @param size is the amount of players.
+    @param round_num is the current number of rounds completed.
+*/ 
 void printBoard(int length, int height, int arr[], int g_arr[], int* ranking_arr, int* new_arr, int size, int round_num) {
 
-    // gradient codes [LRED, LMAG, LBLU, LCYN, LYEL]
     int row_iterator = 1, k = 0;
     printf(LBLK "\n\n  *]----------------------------------------------------------------------------------------]*[--------------------[*\n\n" KRST);
 
-    for(int i = 1; i <= height; i++) {
+    // Loops through all rows
+    for (int i = 1; i <= height; i++) {
 
-        // print board
+        // Determine if the column should be printed forwards or backwards.
         printf("\t");
         if (i%2 == 0) {
-            for(int j = 1; j <= length; j++)  
-                if(!checkPlayer(length*height-(i*10)+j, arr, size, ranking_arr, g_arr))
+            for (int j = 1; j <= length; j++)  
+                if (!checkPlayer(length*height-(i*10)+j, arr, size, ranking_arr, g_arr))
                     printf(LBLK "|  %02d  |" KRST, length*height-(i*10)+j);
         } else {
-            for(int j = height; j >= 1; j--) 
+            for (int j = height; j >= 1; j--) 
                 if (!checkPlayer((10-i)*10+j, arr, size, ranking_arr, g_arr) && (10-i)*10+j != 100)
                     printf(LBLK "|  %02d  |" KRST, (10-i)*10+j);
         }
     
-        // appends the right row
+        // Appends the rightmost row
         checkInstance(row_iterator, round_num, arr, size, ranking_arr, new_arr, g_arr);
         row_iterator++;
         checkInstance(row_iterator, round_num, arr, size, ranking_arr, new_arr, g_arr);
@@ -188,18 +273,13 @@ void printBoard(int length, int height, int arr[], int g_arr[], int* ranking_arr
     printf(LBLK "  *]----------------------------------------------------------------------------------------]*[--------------------[*\n\n" KRST);
 }
 
-void gradualPrint(int speed, char s[]) {
+// * End of Board Printing
+// * Game Design & Intermissions
 
-    for (int i = 0; i < strlen(s); i++) {
-        printf("%c", s[i]);
-        usleep(speed);
-        // fflush(stdout);
-    }
-}
-void centerText(char *text) {
-    printf("%.*s%s \n", (int)((CAP/2) - (strlen(text)/2)), "                                                                              ", text);
-}
-
+/*  
+    * Prints the starting disclaimer.
+    Preconditions: N/A
+*/ 
 void prDisclaimer() {
 
     system("cls");
@@ -240,26 +320,28 @@ void prDisclaimer() {
 
     printf(KRST);
 
-    // ! find alternative
     getchar();
     system("cls");
 }
 
-// todo: change function names
+/*  
+    * Takes a string and centers and colors it.
+    Preconditions: A valid ANSI Color string.
+    @param *color is a ANSI Color Escape Sequence.
+    @param *text is the string to be centered.
+*/ 
 void modLogo(char* color, char* text) {
+
     printf(color);
     centerText(text);
     usleep(1*MSCND);
 }
-void prLogo() {
 
-    /* // todo: replace logo
-    modLogo(LWHT, (char*)"    ___  ____ ____ ____ ____ ____    _    ____ ___  ___  ____ ____ ____      "); 
-    modLogo(KWHT, (char*)"    |  \\ |  | | __ | __ |  | [__     |    |__| |  \\ |  \\ |___ |__/ [__      ");
-    modLogo(LBLK, (char*)"    |__/ |__| |__] |__] |__| ___]    |___ |  | |__/ |__/ |___ |  \\ ___]     ");
-    modLogo(LWHT, (char*)"       ____ _  _ ____ _  _ ____ ____    _  _ ___ _  _ ____ _  _ ____         ");
-    modLogo(KWHT, (char*)"       [__  |\\ | |__| |_/  |___ [__     |  |  |  |  | |__/ |\\ | [__         ");
-    modLogo(LBLK, (char*)"       ___] | \\| |  | | \\_ |___ ___]    |__|  |  |__| |  \\ | \\| ___]        "); */
+/*  
+    * Prints the game logo.
+    Preconditions: N/A
+*/ 
+void prLogo() {
 
     modLogo(KRST LCYN, (char*)"     __                            __        __   __                  ");
     modLogo(KRST KCYN, (char*)" ___/ /__  ___ ____ ____  ___     / /__ ____/ /__/ /__ _______        ");
@@ -270,10 +352,15 @@ void prLogo() {
     modLogo(KRST LBLU, (char*)"         /___/_//_/\\_,_/_/\\_\\\\__/___( )  \\_,_/\\__/\\_,_/_/ /_//_/___( )");
     modLogo(KRST KBLU, (char*)"                                    |/                             |/ ");
 
-
     printf(KRST);
 }
 
+/*  
+    * Prints the main menu.
+    Preconditions: "delay" is a positive value in milliseconds.
+
+    @param delay is the number of milliseconds to wait.
+*/ 
 void prMenu(int delay) {
 
     usleep(1*HSCND);
@@ -287,58 +374,50 @@ void prMenu(int delay) {
     gradualPrint(delay, "\n\n\t\t\t\t\t\t  [>] " KRST);
 }
 
-void printDiceDigit(int dice) {
-
-    if (dice == 10) printf(KCYN "1 0");
-    else printf(KCYN "0 %d", dice);   
-}
-void printDice(int dice_a, int dice_b) {
-
-    printf("\n\n\n\n" LBLK);
-
-    printf("\t                             .:      -#=:                        \n");
-    printf("\t                       #====+##      *-*:===.                    \n");
-    printf("\t               .#=====:   .=:=-      # .*   :==-.                \n");
-    printf("\t          .====:        .=-  #       #  .*      -==-             \n");
-    printf("\t         -#-     ::    =-   :=       #    *.  ::   .-#-          \n");
-    printf("\t        =-=:         ==     *       .*     *.       ==*.         \n");
-    printf("\t        * *=---:.  -=      .+       :=  :: .#=-----=*  #         \n");
-    printf("\t       =:-=    .:-+-   ::  +.       =-    .*        #  #         \n");
-
-    printf("\t       *.*         *       *        +:   .*   ");
-    printDiceDigit(dice_b);
-    printf(LBLK "   *. #         \n");
-
-    printf("\t      -=*    ");
-    printDiceDigit(dice_a);
-    printf(LBLK "   =:     --        :%%=--#:         :+ #         \n");
-        
-    printf("\t      *+.           *  .::#          .*:  -+:        # #         \n");
-    printf("\t     :#=         .--=-=++-             -==: :+=      *:*         \n");
-    printf("\t     ##      :-=++----:                   .==-:==.   :**         \n");
-    printf("\t    .%%  .=+#*=--.                             -==*+:  %%*         \n");
-    printf("\t    +#+*+-.                                      :=##-*+         \n");
-    printf("\t                                                    .=*=         \n");
-
-    printf("\n\n\n\n");
-}
-
+/*  
+    * Prints a standalone loading screen.
+    Preconditions: N/A
+*/ 
 void loadScreen() {
 
     system("cls");
+    usleep(1*FSCND);
+    
     printf("\n\n\n\n\n\n\n\n\n\n\n\n\n" LBLK);
 
         printf("%*.sLoading: ", 52);
         fflush(stdout);
         
-        for(int i = 0; i <= 100; i++) {
+        for (int i = 0; i <= 100; i++) {
             printf("[%02d%%]", i);
             
             usleep(1*NSCND);
-            fflush(stdout);
+            fflush(stdout);     // OnlineGDB Dependency
             
             if (i != 100) printf("\b \b\b \b\b \b\b \b\b \b");
         }
     
     usleep(1*FSCND);
 }
+
+/*  
+    * Prints the endgame screen.
+    Preconditions: N/A
+*/ 
+void endGame() {
+
+    system("cls");
+
+    printf("\n\n\n\n\n\n\n\n\n\n\n");
+    modLogo(KRST KBLU, "      _______ _     _ _______ __   _ _     _      __   __  _____  _     _        ");
+    modLogo(KRST KCYN, "         |    |_____| |_____| | \\  | |____/         \\_/   |     | |     |        ");
+    modLogo(KRST LCYN, "         |    |     | |     | |  \\_| |    \\_         |    |_____| |_____|        ");
+    modLogo(KRST KBLU, " _______  _____   ______       _____         _______ __   __ _____ __   _  ______");
+    modLogo(KRST KCYN, " |______ |     | |_____/      |_____] |      |_____|   \\_/     |   | \\  | |  ____");
+    modLogo(KRST LCYN, " |       |_____| |    \\_      |       |_____ |     |    |    __|__ |  \\_| |_____|");
+    printf("\n\n\n\n\n\n\n\n\n\n\n" KRST);
+
+    usleep(1*FSCND);
+}
+
+// * End of Game Design & Intermissions

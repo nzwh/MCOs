@@ -1,3 +1,42 @@
+/*
+
+    This is to certify that this project is my own work, based on my personal efforts in studying and applying the concepts 
+    learned. I have constructed the functions and their respective algorithms and corresponding code by myself. The program 
+    was run, tested, and debugged by my own efforts. I further certify that I have not copied in part or whole or otherwise 
+    plagiarized the work of other students and/or persons. 
+
+    Ivan Isaiah Serato, DLSU ID#12148083
+
+    -----------------------------------------------------------------------------------------------------------------------
+
+    Description:    This program is a modified recreation of the famous board game entitled "Snake and Ladders."
+                    Assigned to only be played by one player against 1-4 computers, this game is a luck and
+                    turn-based game that incldues extra functionality by adding two new object types, namely:
+                    The Doggo and The U-Turn. PLayers take turns until they eventually reach the finish line.
+
+    Programmed by:  Ivan Serato, 02103B, BSCS-ST CCS 121, Term 1 of 3
+    Last Modified:  02/06/2022, 20:00
+    Version:        2.2
+    
+    Acknowledgements:
+
+        ANSI Escape Codes
+        https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
+
+        ASCII Text Generator
+        https://patorjk.com/software/taag/
+
+        Libraries:
+
+        <stdio.h>   getchar()
+        <stdlib.h>  rand(), srand(), system()
+        <time.h>    seeding srand()
+        <math.h>    abs()
+        <unistd.h>  usleep()
+        <string.h>  strlen()
+        
+*/
+
 #include "functions.h"
 
 int main(void) {
@@ -5,15 +44,17 @@ int main(void) {
     srand(time(0));
     int length = 10, height = 10;
     int play = 1, pSize, pStruct, rCount = 0;
-    int g_arr[] = {31, 35, 34, 36, 33};
     int stopover, quirk;
-    int dice_a = 0, dice_b = 0, w_quirk;
+    int dice_a = 0, dice_b = 0;
 
-    // print disclaimer
+    // Gradient Codes [LRED, LMAG, LBLU, LCYN, LYEL]
+    int g_arr[] = {31, 35, 34, 36, 33};
+
+    // Starting sequence
     prDisclaimer();
-    // print menu
     prMenu(30000);
 
+    // Loop until the player chooses 1 or 0.
     do {
 
         scanf("%d", &play);
@@ -21,12 +62,16 @@ int main(void) {
             printf("\b \b");
 
     } while (play != 1 && play != 0);
-   
-    while (play == 1) {
+    
+    // Loop until player exits
+    while (play) {
 
+        // * Start of Prologue
+        
+        // Loading sequence
         loadScreen();
 
-        // loop until proper value is set
+        // Loop until the player chooses a value between 2 and 5.
         do {
             
             system("cls");
@@ -43,154 +88,166 @@ int main(void) {
 
         } while (pSize < 2 || pSize > 5);
 
-        // initializes player position
+        // * End of Prologue
+        // * Start of Initialization
+
+        // Initializes player arrays
         int py[pSize], pp[pSize];
         int ranking_arr[pSize], new_arr[pSize];
         int pyx_move[pSize];
 
+        // Fill all values with 0
         for (int i = 0; i < pSize; i++) {
             py[i] = 0;
             pyx_move[i] = 0;
         }
 
-        // initializes quirks
+        // Initializes quirks
         int pyx[pSize][QKLMT];
         for (int i = 0; i < pSize; i++)
             for(int j = 0; j < QKLMT; j++)
             pyx[i][j] = 0;
 
-        // initializes quirk totals
+        // Initializes quirk totals
         int pyx_total[QKLMT-1];
         for (int i = 0; i < QKLMT-1; i++)
             pyx_total[i] = 0;
 
-        // start
+        // * End of initialization
+        // * Start of Game
+
         system("cls");
         usleep(1*FSCND);
         
-        // loops until someone wins
+        // Loop until a player wins, or reaches Tile 100
         do {   
             
-            // reset ranking
+            // * Start of Game Intro
+
+            // Clear ranking_arr for new values
             for (int i = 0; i < pSize; i++) 
                 ranking_arr[i] = 0;
 
+            // Typerwriter: Presequence
             printf("\n\n\n\n");
-
             gradualPrint(1*NSCND, LBLK "\t[>] Determining Player Sequence");
             prEllipses(1*HSCND);
 
-            // initializes the player sequence through a function
+            // Initializes the Player Sequence Number through a function
             int pSequence = playerSequence(pSize), iSequence = 0;
             printf(KRST "\n\n\tPlayer Sequence Integer: %s%d" KRST, LRED, pSequence);
             
-            // inverts the sequence number in order to loop through all the digits
+            // Inverts the Player Sequence Number
             for (; pSequence != 0; pSequence /= 10) {
                 iSequence *= 10;
                 iSequence += pSequence % 10;
             }
 
-            // animated intro
+            // Typewriter: Sequence
             usleep(1*FSCND);
             printf("\n\tThe current sequence of players goes as follows: \n\t");
-            for(int c = iSequence, i = 0; c != 0; c /= 10, i++) {
+            for (int c = iSequence, i = 0; c != 0; c /= 10, i++) {
                 usleep(1*HSCND);
                 printf("\x1B[%d;1m" "Player %d%s, then ", g_arr[(c%10)-1], c%10, KRST);
             }
-
             printf("\b \b\b \b\b \b\b \b\b \b\b \b\b \b. ");
 
             usleep(1*FSCND);
             printf(LBLK "\n\n\t< Press the enter key to continue >" KRST);
             getchar();
-            // end
 
+            // * End of Game Intro
+            // * Start of Player Loop
 
-
-            // * game start
             printf("\n\n");
             pStruct = iSequence;
 
+            // Loops through the inverted sequence until it reaches zero
             for (int prev = 0; pStruct != 0 && prev != 100; pStruct /= 10) {
                 
-                // extract current player
+                // Extract current player
                 int pCurrent = (pStruct%10)-1;
-                quirk = 0;
+                quirk = 0;  // Reset quirk
             
-                // print location animation
+                // Typewriter: Player
                 usleep(1*HSCND);
                 printf("\x1B[%d;1m" "\t[>] Player %02d%s's Turn!\n", g_arr[pCurrent], pCurrent+1, KRST);
                 usleep(1*HSCND);
                 printf("\x1B[%d;1m" "\tPlayer %02d%s rolled: " KCYN, g_arr[pCurrent], pCurrent+1, KRST);
 
-                // roll location
+                // Initializes the duplicate with the new location
                 pp[pCurrent] = rollDice(py[pCurrent], &dice_a, &dice_b);
+                // Check if the player reaches beyond Tile 100
                 overflow(&pp[pCurrent]);
                 
-                // roll location animation
+                // Typewriter: Roll
                 printf(LBLK "\tLanded on Tile [%02d].\n\n" KRST, pp[pCurrent]);
                 usleep(1*HSCND);
 
-                // * does not compute for quirk anymore
+                // Does not execute if the player reaches Tile 100
                 if (pp[pCurrent] < 100 && (dice_a != 5 || dice_b != 5)) {
 
-                    // getting quirk
+                    // Initializes the duplicate with th new location
                     pp[pCurrent] = getQuirk(py[pCurrent], pp[pCurrent], &quirk);
-                    // getting quirk animation
+
+                    // Typewriter: Quirk
                     printf("\x1B[%d;1m" "\tPlayer %02d%s's current location is now on %sTile [%02d]%s.\n\n", 
                             g_arr[pCurrent], pCurrent+1, KRST, KCYN  HUND, pp[pCurrent], KRST);
                     usleep(1*HSCND);
+                    // Check if the player reaches beyond Tile 100
                     overflow(&pp[pCurrent]);    
 
+                    // Initialize quirk as 0 if it is not a [D,L,S,U]
                     if (quirk > 4) quirk = 0;
 
-                    // computes farthest quirk
+                    // Computes for the farthest distance travelled from an object
                     if (abs(pp[pCurrent] - py[pCurrent]) > pyx[pCurrent][0] && quirk != 0) {
                         pyx[pCurrent][0] = abs(pp[pCurrent] - py[pCurrent]);
                         pyx_move[pCurrent] = quirk;
                     }
                     
-                    // adds the quirk total
+                    // Increments the quirk total of the player
                     if (quirk <= 4 && quirk > 0) pyx[pCurrent][quirk]++;
-
                 }
-                // if above does not run, it will retain previous
 
-                // store new location into the main array
+                // Store the new location in the current array
                 py[pCurrent] = pp[pCurrent];
 
-                // stopper
+                // Typewriter: Wait
                 printf(LBLK "\t< Press the enter key to continue >" KRST);
                 printf(KRST "\n\n");
                 getchar();
 
-                
-
-                // stores previous player
+                // Stores the previous player's location
                 prev = py[pCurrent];
             }
 
-            // computes ranking_arr and new_arr
-            determineRank(py, ranking_arr, new_arr, pSize);
+            // * End of Player Loop
+            // * Start of Statistic Update
 
+            // Computes for ranking_arr[] and new_arr[]
+            determineRank(py, ranking_arr, new_arr, pSize);
+            // Only runs if no one has won yet
             if (!isWin(py, pSize)) {
                 
-                rCount++; // round count
+                rCount++; // Increment round count
                 
-                // inserts quirk counter to total
+                // Totals the quirk locations of all players into one array
                 for (int i = 0; i < QKLMT-1; i++)
-                    for(int j = 0; j < pSize; j++)
+                    for (int j = 0; j < pSize; j++)
                         pyx_total[i] += pyx[j][i+1];
 
-                // menu
+                // Print the menu
                 do {
 
                     printf(KRST "\n\t[0] Continue " LBLK "\n\t[1] View Board \n\t[2] Statistics \n\n\t" LBLU "[>] " KRST);
                     scanf(" %d", &stopover);
 
+                    // Menu input
                     switch(stopover) {
                         case 1:
 
+                            // View the player board
                             printf("\n\n");
                             printBoard(length, height, py, g_arr, ranking_arr, new_arr, pSize, rCount);
                             printf("\n\n");
@@ -201,6 +258,7 @@ int main(void) {
                         break;
                         case 2:
 
+                            // View the player ranking
                             printf(KRST "\n\n\n\n\n\n\n\n\n\n" LBLK);
                             centerText((char*)"*]--------------------------------------------------------------------------------------[*");
 
@@ -233,23 +291,27 @@ int main(void) {
                 getchar();
             }
             
-            // clear
+            // * End of Statistic Update
             system("cls");
-
 
         } while(!isWin(py, pSize));
 
+        // * Start of Summary
+
+        // Compute digit to column number
         if (dice_a % 2 == 0 && dice_b != 0) 
             dice_b = 11 - dice_b;
         int py_winner = ranking_arr[0]-1;
 
         printf(LBLK "\n\n\n\n  *]---------------------------------------------------------------------------------------------------------------[*\n\n\n" KRST);
 
+            // Header logo
             modLogo(KRST KBLU ,"____      ___  _______    ________    ____  ______   ______  __    __");
             modLogo(KRST KCYN ,"/___(\\___\\/  / /  /|  |\\__/|  ||  |\\__/|  | /  /\\  \\ |  |)  )(__(  )__)");
             modLogo(KRST LCYN ,"(   \\)___)\\__\\/__/ |__|    |__||__|    |__|/__/  \\__\\|__|\\__\\   |__|  ");
-
             printf(KRST "\n\n");
+
+            // * Statistic Box
 
             centerText("__                                                                                            __"); 
             centerText("|                                                                                              |"); 
@@ -261,13 +323,15 @@ int main(void) {
 
             printf(LBLU "\n\t\t\t   Ladders Escalated:   [%02d]" KRST, pyx[py_winner][ladders]);
             printf("\tFarthest Object Travel:    ");
-            switch(pyx_move[py_winner]) {
+
+                // Prints the appropriate quirk
+                switch(pyx_move[py_winner]) {
                     case doggos: printf("Doggo "); break;
                     case ladders: printf("Ladder "); break;
                     case slides: printf("Slide "); break;
                     case uturns: printf("U-turn "); break;
                     default: printf("None "); break;
-            }
+                }
 
             printf(LRED "\n\t\t\t   Slides Utilized:     [%02d]" KRST, pyx[py_winner][slides]);
             printf(LMAG "\n\t\t\t   U-turns Appeared:    [%02d]" KRST, pyx[py_winner][uturns]);
@@ -276,19 +340,26 @@ int main(void) {
 
                 printf("\n\n\t\t\t   Player rolled a %s[%d]", LYEL, dice_a);
                 if (dice_b != 0) printf("[%d]", dice_b);
+
+                // Prints the appropriate quirk
                 switch(quirk) {
                     case doggos: printf(KRST " into a %sDoggo", LCYN); break;
                     case ladders: printf(KRST " into a %sLadder", LBLU); break;
                     case slides: printf(KRST " into a %sSlide", LRED); break;
                     case uturns: printf(KRST " into a %sU-turn", LMAG); break;
                 }
+
                 printf(KRST " that led to Tile 100. \n");
 
             centerText("|_                                                                                            _|"); 
 
-        printf(LBLK "\n\n  *]---------------------------------------------------------------------------------------------------------------[*\n\n\n\n" KRST);
+            // * End of Statistic Box
 
+        printf(LBLK "\n\n  *]---------------------------------------------------------------------------------------------------------------[*\n\n\n\n" KRST);
         getchar();
+
+        // * End of Summary
+        // * Start of Re-input
 
         do {
 
@@ -297,6 +368,9 @@ int main(void) {
             scanf(" %d", &play);                                                 
             
         } while (play != 1 && play != 0 && play != 2);
+
+        // * End of Re-input
+        // * Optional: Return to Main Menu
 
         if (play == 2) {
             system("cls");
@@ -307,18 +381,10 @@ int main(void) {
                     printf("\b \b");
             } while (play != 1 && play != 0);
         }
+
+        // * End of Optional
     }
 
-    system("cls");
-
-    printf("\n\n\n\n\n\n\n\n\n\n\n");
-    modLogo(KRST KBLU, "      _______ _     _ _______ __   _ _     _      __   __  _____  _     _        ");
-    modLogo(KRST KCYN, "         |    |_____| |_____| | \\  | |____/         \\_/   |     | |     |        ");
-    modLogo(KRST LCYN, "         |    |     | |     | |  \\_| |    \\_         |    |_____| |_____|        ");
-    modLogo(KRST KBLU, " _______  _____   ______       _____         _______ __   __ _____ __   _  ______");
-    modLogo(KRST KCYN, " |______ |     | |_____/      |_____] |      |_____|   \\_/     |   | \\  | |  ____");
-    modLogo(KRST LCYN, " |       |_____| |    \\_      |       |_____ |     |    |    __|__ |  \\_| |_____|");
-    printf("\n\n\n\n\n\n\n\n\n\n\n" KRST);
-
-    usleep(1*FSCND);
+    // Prints the ending screen
+    endGame();
 }
