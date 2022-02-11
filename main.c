@@ -5,8 +5,6 @@
     was run, tested, and debugged by my own efforts. I further certify that I have not copied in part or whole or otherwise 
     plagiarized the work of other students and/or persons. 
 
-    Ivan Isaiah Serato, DLSU ID#12148083
-
     -----------------------------------------------------------------------------------------------------------------------
 
     Description:    This program is a modified recreation of the famous board game entitled "Snake and Ladders."
@@ -14,8 +12,7 @@
                     turn-based game that incldues extra functionality by adding two new object types, namely:
                     The Doggo and The U-Turn. PLayers take turns until they eventually reach the finish line.
 
-    Programmed by:  Ivan Serato, 02103B, BSCS-ST CCS 121, Term 1 of 3
-    Last Modified:  02/06/2022, 20:00
+    Last Modified:  02/12/2022, 00:00
     Version:        2.2
     
     Acknowledgements:
@@ -37,7 +34,7 @@
         
 */
 
-#include "functions.h"
+#include "g_logic.h"
 
 int main(void) {
 
@@ -110,8 +107,6 @@ int main(void) {
 
         // Initializes quirk totals
         int pyx_total[QKLMT-1];
-        for (int i = 0; i < QKLMT-1; i++)
-            pyx_total[i] = 0;
 
         // * End of initialization
         // * Start of Game
@@ -232,6 +227,10 @@ int main(void) {
                 
                 rCount++; // Increment round count
                 
+                // Reset values
+                for (int i = 0; i < QKLMT-1; i++)
+                    pyx_total[i] = 0;
+
                 // Totals the quirk locations of all players into one array
                 for (int i = 0; i < QKLMT-1; i++)
                     for (int j = 0; j < pSize; j++)
