@@ -343,14 +343,14 @@ void modLogo(char* color, char* text) {
 */ 
 void prLogo() {
 
-    modLogo(KRST LCYN, (char*)"     __                            __        __   __                  ");
-    modLogo(KRST KCYN, (char*)" ___/ /__  ___ ____ ____  ___     / /__ ____/ /__/ /__ _______        ");
-    modLogo(KRST LBLU, (char*)"/ _  / _ \\/ _ `/ _ `/ _ \\(_-<_   / / _ `/ _  / _  / -_) __(_-<_       ");
-    modLogo(KRST KBLU, (char*)"\\_,_/\\___/\\_, /\\_, /\\___/___( ) /_/\\_,_/\\_,_/\\_,_/\\__/_/ /___( )      ");
-    modLogo(KRST LCYN, (char*)"         /___//___/ ___ _/ /|/___ ___     __ __/ /___ _______|/  ___  ");
-    modLogo(KRST KCYN, (char*)"          (_-</ _ \\/ _ `/  '_/ -_|_-<_   / // / __/ // / __/ _ \\(_-<_ ");
-    modLogo(KRST LBLU, (char*)"         /___/_//_/\\_,_/_/\\_\\\\__/___( )  \\_,_/\\__/\\_,_/_/ /_//_/___( )");
-    modLogo(KRST KBLU, (char*)"                                    |/                             |/ ");
+    modLogo(KRST LCYN, (char*)"     __                            __        __   __              ");
+    modLogo(KRST KCYN, (char*)" ___/ /__  ___ ____ ____  ___     / /__ ____/ /__/ /__ _______    ");
+    modLogo(KRST LBLU, (char*)"/ _  / _ \\/ _ `/ _ `/ _ \\(_-<_   / / _ `/ _  / _  / -_) __(_-<_   ");
+    modLogo(KRST KBLU, (char*)"\\_,_/\\___/\\_, /\\_, /\\___/___( ) /_/\\_,_/\\_,_/\\_,_/\\__/_/ /___( )  ");
+    modLogo(KRST LCYN, (char*)"         /___//___/ (_)__/ /|/ ___     __ __/ /___ _________ |/__ ");
+    modLogo(KRST KCYN, (char*)"             (_-</ / / _  / -_|_-<_   / // / __/ // / __/ _ \\(_-<_");
+    modLogo(KRST LBLU, (char*)"            /___/_/_/\\_,_/\\__/___( )  \\_,_/\\__/\\_,_/_/ /_//_/___( )");
+    modLogo(KRST KBLU, (char*)"                                 |/                             |/ ");                        
 
     printf(KRST);
 }
@@ -385,7 +385,7 @@ void loadScreen() {
     
     printf("\n\n\n\n\n\n\n\n\n\n\n\n\n" LBLK);
 
-        printf("%*.sLoading: ", 52);
+        printf("%*s", 60, "Loading: ");
         fflush(stdout);
         
         for (int i = 0; i <= 100; i++) {

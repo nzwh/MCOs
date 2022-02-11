@@ -1,5 +1,5 @@
 // Include all functions from "assets.h"
-#include "assets.h"
+#include "g_dsgn.h"
 
 /*  
     * Determines if a number contains a digit.
@@ -65,9 +65,6 @@ int getQuirk(int pr_position, int position, int* quirk) {
     int new_pos, n_row = 0, n_col = 0;
     int x_row = 0, x_col = 0;
 
-    // Extract the tenth and ones of the position
-    int dig_o = position%10, dig_t = position/10;
-
     if (*quirk == uturns) {
         gradualPrint(20000, LMAG "\t[>] Player encountered a " HUND "U-turn!" KRST "\n");
         printf("\tThe %sU-turn%s leads the player back to their original position.\n" KRST, LMAG HUND, KRST);
@@ -85,7 +82,7 @@ int getQuirk(int pr_position, int position, int* quirk) {
 
             case ladders:
 
-                n_row = dig_t;
+                n_row = position/10;
                 if (position % 20 != 0)
                     n_row++;
                 n_row = (rand()% (10-n_row) ) + n_row + 1;
@@ -97,7 +94,7 @@ int getQuirk(int pr_position, int position, int* quirk) {
                 
             case slides:
 
-                n_row = dig_t;
+                n_row = position/10;
                 if (position % 20 != 0)
                     n_row++;
                 n_row = (rand()% (n_row-1) )+1;
