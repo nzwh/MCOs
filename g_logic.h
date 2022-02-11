@@ -1,4 +1,4 @@
-// Include all functions from "assets.h"
+// Include all functions from "g_dsgn.h"
 #include "g_dsgn.h"
 
 /*  
