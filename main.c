@@ -1,39 +1,3 @@
-/*
-
-    This is to certify that this project is my own work, based on my personal efforts in studying and applying the concepts 
-    learned. I have constructed the functions and their respective algorithms and corresponding code by myself. The program 
-    was run, tested, and debugged by my own efforts. I further certify that I have not copied in part or whole or otherwise 
-    plagiarized the work of other students and/or persons. 
-
-    -----------------------------------------------------------------------------------------------------------------------
-
-    Description:    This program is a modified recreation of the famous board game entitled "Snake and Ladders."
-                    Assigned to only be played by one player against 1-4 computers, this game is a luck and
-                    turn-based game that incldues extra functionality by adding two new object types, namely:
-                    The Doggo and The U-Turn. PLayers take turns until they eventually reach the finish line.
-
-    Last Modified:  02/12/2022, 00:00
-    Version:        2.2
-    
-    Acknowledgements:
-
-        ANSI Escape Codes
-        https://www.lihaoyi.com/post/BuildyourownCommandLinewithANSIescapecodes.html
-
-        ASCII Text Generator
-        https://patorjk.com/software/taag/
-
-        Libraries:
-
-        <stdio.h>   getchar()
-        <stdlib.h>  rand(), srand(), system()
-        <time.h>    seeding srand()
-        <math.h>    abs()
-        <unistd.h>  usleep()
-        <string.h>  strlen()
-        
-*/
-
 #include "g_logic.h"
 
 int main(void) {
