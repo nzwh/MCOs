@@ -1,5 +1,5 @@
 
-![](https://imgur.com/a/agpimxP)
+![](https://cdn.discordapp.com/attachments/703834784266190848/941741720318640168/DLSU.png)
 
 Doggos, Ladders, Slides, U-Turns
 ---
@@ -10,12 +10,9 @@ Doggos, Ladders, Slides, U-Turns
 >    `Last Modified:  02/12/2022, 00:00`
 >    `Version:  Alpha 2.40`
 
-<hr>
+<p> This program is a modified recreation of the famous board game entitled "Snake and Ladders." Assigned to be only played by against one to four computers, this is a luck and turn-based game that has additional features such as including two new object types: The Doggo and The U-Turn. Players take turns until they reach the finish line. </p>
 
-<p> This program is a modified recreation of the famous board game entitled "Snake and Ladders." Assigned to only be played by one player against 1-4 computers, this game is a luck and turn-based game that incldues extra functionality by adding two new object types, namely: The Doggo and The U-Turn. PLayers take turns until they eventually reach the finish line. </p>
-
-> **WARNING:** This version of the source code is created for Windows Machines. Some functionalities may not work on other terminal systems such as POSIX and UNIX.
-
+> **WARNING:** This version of the source code is meant to be run for Windows Machines. Some functionalities may not work on other terminal systems such as POSIX and UNIX.
 ---
 
 ### **References:**
@@ -27,9 +24,9 @@ Doggos, Ladders, Slides, U-Turns
 
 
 ### **Libraries:**
-> - **`<stdio.h> `**  `getchar()`
+> - **`<stdio.h>`**   `getchar()`
 > - **`<stdlib.h>`**  `rand()`, `srand()`, `system()`
 > - **`<unistd.h>`**  `usleep()`
 > - **`<string.h>`**  `strlen()`
-> - **`<time.h>  `**  `time()`
-> - **`<math.h>  `**  `abs()`
+> - **`<time.h>`**    `time()`
+> - **`<math.h>`**    `abs()`
