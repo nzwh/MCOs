@@ -1,5 +1,5 @@
 
-![](https://cdn.discordapp.com/attachments/703834784266190848/941741720318640168/DLSU.png)
+![](https://cdn.discordapp.com/attachments/703834784266190848/942017209339875378/DLSU_1.png)
 
 Doggos, Ladders, Slides, U-Turns
 ---
