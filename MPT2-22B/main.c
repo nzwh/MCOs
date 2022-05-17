@@ -29,14 +29,23 @@ int main(void) {
 
     for (int i = 1; !over; i++) {
         
+        printf("\nRound %02d\n", i);
         intp next = base.arr_s[rand() % base.s_length];
+
+        printf("Previous: [%d, %d]\n", prev.x, prev.y);
+        printf("Next:[%d, %d]\n\n", next.x, next.y);
+        fflush(stdout);
+
+        PrintInline(Alpha, base.a_length, "Alpha: ");
+        PrintInline(Beta, base.b_length, "Beta: ");
+        fflush(stdout);
 
         NextPlayerMove(prev, next, Alpha, Beta, Free, &base, &aTurn, &ok);
         UpdateFree(Alpha, Beta, Free, &base); 
-        
         result = GameOver(&over, Alpha, Beta, base);
         prev = next;
     }
 
+    printf("Winner: Player %c\n", result);
     return 0;
 }

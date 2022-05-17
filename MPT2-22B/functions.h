@@ -44,6 +44,16 @@
         }
     }
 
+    void PrintInline(intp* arr, int len, char* name) {
+        
+        printf("%s", name);
+        for (int i = 0; i < len; i++) {
+            printf("[%d, %d] ", arr[i].x, arr[i].y);
+            fflush(stdout);
+        }
+        printf("\n");
+    }
+
     void NextPlayerMove(intp prev, intp next, intp* Alpha, intp* Beta, intp* Free, ints* base, bool* aTurn, bool* ok) {
 
         int a = prev.x, b = prev.y;
