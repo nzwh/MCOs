@@ -1,11 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <time.h>
 
 #include "requisites.h"
 #include "functions.h"
 
 int main(void) {
+
+    srand(time(0));
 
     ints base;
     Fill(&base);
@@ -20,6 +23,18 @@ int main(void) {
     base.f_length = base.p_length - (base.a_length + base.b_length);
     intp* Free = malloc(sizeof(intp) * base.f_length); 
     UpdateFree(Alpha, Beta, Free, &base);   
+
+    char result;
+    intp prev = (intp){0, 0}, next;
+
+    for (int i = 1; !over; i++) {
+        
+        intp next = base.arr_s[rand() % base.s_length];
+
+        NextPlayerMove(prev, next, Alpha, Beta, Free, &base, &aTurn, &ok);
+        UpdateFree(Alpha, Beta, Free, &base); 
+        prev = next;
+    }
 
     return 0;
 }
