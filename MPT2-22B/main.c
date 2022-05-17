@@ -11,12 +11,15 @@ int main(void) {
     Fill(&base);
 
     bool aTurn = true, over = false, ok = false;
-    intp* Alpha = base.arr_e;
-    intp* Beta = base.arr_y;
+    base.a_length = base.e_length, base.b_length = base.y_length;
 
-    int f_length = base.p_length - (base.e_length + base.y_length);
-    intp* Free = malloc(sizeof(intp) *f_length);
-    UpdateFree(Alpha, Beta, Free, base);
+    intp* Alpha = malloc(sizeof(intp) * base.p_length);
+    intp* Beta = malloc(sizeof(intp) * base.p_length);
+    Alpha = base.arr_e, Beta = base.arr_y;
+
+    base.f_length = base.p_length - (base.a_length + base.b_length);
+    intp* Free = malloc(sizeof(intp) * base.f_length); 
+    UpdateFree(Alpha, Beta, Free, &base);   
 
     return 0;
 }

@@ -25,6 +25,10 @@
         int s_length;
         int y_length;
         int e_length;
+
+        int a_length;
+        int b_length;
+        int f_length;
     } ints;
 
     //  * Function that accepts an "ints" structure and fills the 
