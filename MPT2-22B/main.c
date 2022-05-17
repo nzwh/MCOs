@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "requisites.h"
+#include "functions.h"
 
 int main(void) {
 
