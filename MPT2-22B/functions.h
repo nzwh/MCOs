@@ -117,3 +117,32 @@
             *ok = !*ok;
         }
     }
+
+    bool DetectCopy(intp* x, intp* y, int x_len, int y_len) {
+
+        if (x_len != y_len) return false;
+        for (int i = 0; i < x_len; i++)
+        if (!(x[i].x == y[i].x && x[i].y == y[i].y))
+            return false;
+        return true;
+    }
+
+    char GameOver(bool* over, intp* Alpha, intp* Beta, ints base) {
+
+        if ((base.a_length > 0 && base.b_length > 0)
+        || DetectCopy(Alpha, base.arr_y, base.a_length, base.y_length)
+        || DetectCopy(Beta, base.arr_e, base.b_length, base.e_length))
+            return '/';
+        
+        *over = true;
+        char result;
+
+        if (base.b_length == 0 || DetectCopy(Alpha, base.arr_y, base.a_length, base.y_length)) {
+            result = 'A';
+        } else if (base.a_length == 0 || DetectCopy(Beta, base.arr_e, base.b_length, base.e_length)) {
+            result = 'B';
+        }
+
+        return result;
+    }
+

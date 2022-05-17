@@ -33,6 +33,8 @@ int main(void) {
 
         NextPlayerMove(prev, next, Alpha, Beta, Free, &base, &aTurn, &ok);
         UpdateFree(Alpha, Beta, Free, &base); 
+        
+        result = GameOver(&over, Alpha, Beta, base);
         prev = next;
     }
 
