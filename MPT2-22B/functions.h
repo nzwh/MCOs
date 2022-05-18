@@ -13,7 +13,6 @@
         for(int i = 0; i < base->p_length; i++) {
         if (Contains(base->arr_p[i], Alpha, base->a_length)) continue;
         if (Contains(base->arr_p[i], Beta, base->b_length)) continue;
-
             Free[j] = base->arr_p[i];
             j++;
         }
@@ -140,8 +139,8 @@
     char GameOver(bool* over, intp* Alpha, intp* Beta, ints base) {
 
         if ((base.a_length > 0 && base.b_length > 0)
-        || DetectCopy(Alpha, base.arr_y, base.a_length, base.y_length)
-        || DetectCopy(Beta, base.arr_e, base.b_length, base.e_length))
+        && !DetectCopy(Alpha, base.arr_y, base.a_length, base.y_length)
+        && !DetectCopy(Beta, base.arr_e, base.b_length, base.e_length))
             return '/';
         
         *over = true;
@@ -152,7 +151,20 @@
         } else if (base.a_length == 0 || DetectCopy(Beta, base.arr_e, base.b_length, base.e_length)) {
             result = 'B';
         }
-
         return result;
+    }
+
+    void Freer(intp* Alpha, intp* Beta, intp* Free, ints* base) {
+        
+        free(Alpha);
+        free(Beta);
+        free(Free);
+
+        free(base->arr_r);
+        free(base->arr_c);
+        free(base->arr_p);
+        free(base->arr_s);
+        free(base->arr_y);
+        free(base->arr_e);
     }
 

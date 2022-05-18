@@ -22,7 +22,7 @@ int main(void) {
 
     base.f_length = base.p_length - (base.a_length + base.b_length);
     intp* Free = malloc(sizeof(intp) * base.f_length); 
-    UpdateFree(Alpha, Beta, Free, &base);   
+    UpdateFree(Alpha, Beta, Free, &base);
 
     char result;
     intp prev = (intp){0, 0}, next;
@@ -33,7 +33,10 @@ int main(void) {
         intp next = base.arr_s[rand() % base.s_length];
 
         printf("Previous: [%d, %d]\n", prev.x, prev.y);
-        printf("Next:[%d, %d]\n\n", next.x, next.y);
+        printf("Next: [%d, %d]\n\n", next.x, next.y);
+        fflush(stdout);
+
+        printf("Turn: %s", aTurn ? "Alpha\n" : "Beta\n");
         fflush(stdout);
 
         PrintInline(Alpha, base.a_length, "Alpha: ");
@@ -46,6 +49,8 @@ int main(void) {
         prev = next;
     }
 
-    printf("Winner: Player %c\n", result);
+    printf("\nWinner: Player %c !\n", result);
+    Freer(Alpha, Beta, Free, &base);
+
     return 0;
 }
