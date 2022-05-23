@@ -31,10 +31,32 @@
         return focus;
     }
 
-    void Tokenization(char *initial, char* tokens[], int* length) {
+    char* ReplaceDelim(char* input, char* delim, char new) {
 
-        char* input = strdup(initial);
-        char* delims = " .,?!\n";
+        char* new_input = (char*) malloc(strlen(input) + 1);
+        int push = 0, l = 0;
+    
+        for (int i = 0; i < strlen(input); i++, push = 0) {
+            for (int j = 0; j < strlen(delim); j++) 
+                if (input[i] == delim[j]) 
+                    push = 1;
+
+            if (push == 0) {
+                new_input[l] = input[i];
+                l++;
+            }
+        }
+
+        new_input[l] = '\0'; // is this necessary
+        realloc(new_input, l + 1);
+        return new_input;
+    }
+
+    void Tokenization(char *initial, char* tokens[], int* length) {
+        char* init = strdup(initial);
+        char* input = ReplaceDelim(init, ".,?!", ' ');
+
+        char* delims = " \n";
         char* token = strtok(input, delims);
                 
         for (; token != NULL; (*length)++) {
@@ -54,11 +76,13 @@
         fgets(input, MAX_INPUT, stdin);
         Tokenization(input, tokens, &length);
 
-        printf("\nOutput [%d words]: \n", length);
+        printf("\nOutput [%d words]: \n\n", length);
         for (int i = 0; i < length; i++) {
             printf("[%s] ", tokens[i]);
             fflush(stdout);
         }
+
+        getchar();
 
         /* continuation... */
     }
