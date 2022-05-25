@@ -31,33 +31,27 @@
         return focus;
     }
 
-    char* ReplaceDelim(char* input, char* delim, char new) {
+    /* given an input (string), remove all delims (char) */
+    void ReplaceDelim(char* input, char* delim) {
 
-        char* new_input = (char*) malloc(strlen(input) + 1);
-        int push = 0, l = 0;
-    
-        for (int i = 0; i < strlen(input); i++, push = 0) {
-            for (int j = 0; j < strlen(delim); j++) 
-                if (input[i] == delim[j]) 
-                    push = 1;
-
-            if (push == 0) {
-                new_input[l] = input[i];
-                l++;
-            }
+        int k = 0;
+        for (int i = 0; i < strlen(input); i++) {
+            if (strchr(delim, input[i]) == NULL)
+                input[k++] = input[i];
         }
 
-        new_input[l] = '\0'; // is this necessary
-        realloc(new_input, l + 1);
-        return new_input;
+        input[k] = '\0';
+        // realloc(input, k + 1); sizeof returns k, so idt needed
     }
 
-    void Tokenization(char *initial, char* tokens[], int* length) {
-        char* init = strdup(initial);
-        char* input = ReplaceDelim(init, ".,?!", ' ');
+    /* turns a sentence into a word array separated by delim */
+    void Tokenization(char *init, char* tokens[], int* length) {
+
+        char* input = strdup(init);
+        ReplaceDelim(input, ".,?!");
 
         char* delims = " \n";
-        char* token = strtok(input, delims);
+        char* token = strtok(input, " \n");
                 
         for (; token != NULL; (*length)++) {
             tokens[*length] = token;
