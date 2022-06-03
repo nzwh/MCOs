@@ -1,17 +1,59 @@
    
+    // Default Values
     #define RLEN 7
     #define CLEN 5
     #define YLIM 2
     #define ELIM 6
 
+    // Unicode Borders
+    #define NCUL "\u250c"
+    #define NCUR "\u2510"
+    #define NCDL "\u2514"
+    #define NCDR "\u2518"
+    #define NHFT "\u2500"
+    #define NVFT "\u2502"
+    #define NBML "\u2524"
+    #define NBMR "\u251c"
+    #define NBMU "\u252c"
+    #define NBMD "\u2534"
+    #define NALL "\u253c"
+
+    // ANSI Escape Sequences (Colors)
+    #define LBLK  "\x1B[30;1m"
+    #define LRED  "\x1B[31;1m"
+    #define LGRN  "\x1B[32;1m"
+    #define LYEL  "\x1B[33;1m"
+    #define LBLU  "\x1B[34;1m"
+    #define LMAG  "\x1B[35;1m"
+    #define LCYN  "\x1B[36;1m"
+    #define LWHT  "\x1B[37;1m"
+
+    #define KBLK  "\x1B[30m"
+    #define KRED  "\x1B[31m"
+    #define KGRN  "\x1B[32m"
+    #define KYEL  "\x1B[33m"
+    #define KBLU  "\x1B[34m"
+    #define KMAG  "\x1B[35m"
+    #define KCYN  "\x1B[36m"
+    #define KWHT  "\x1B[37m"
+
+    #define HBLD  "\x1B[1m"
+    #define HUND  "\x1B[4m"
+    #define HRVS  "\x1B[7m"
+
+    #define KRST  "\x1B[0m"
+
+    // Pair Structure
     typedef struct intp {
-        int x; int y;
+        int x; int y; int p;
     } intp;
 
+    // Native True/False
     typedef enum { 
         false = 0, true = !false
     } bool;
 
+    // Set Container Structure
     typedef struct ints {
         int* arr_r;
         int* arr_c;
@@ -29,6 +71,7 @@
         int a_length;
         int b_length;
         int f_length;
+        int m_length;
     } ints;
 
     //  * Function that accepts an "ints" structure and fills the 
