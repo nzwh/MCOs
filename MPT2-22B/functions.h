@@ -36,6 +36,13 @@
         PairSort(Merge, base->m_length);
     }
 
+    void SingleFill(intp* Main, intp* Source, int Len, ints* base) {
+        for (int i = 0; i < Len; i++) {
+            Main[i].x = Source[i].x;
+            Main[i].y = Source[i].y;
+        }
+    }
+
     bool Contains(intp target, intp* arr, int len) {
 
         for (int i = 0; i < len; i++)
@@ -95,21 +102,9 @@
         int a = prev.x, b = prev.y;
         int c = next.x, d = next.y;
 
-        //  * Conditional 01
-        if (*aTurn && Contains(prev, Alpha, base->a_length) &&
-            a == c + 1 && (d == b || d == b + 1 || d + 1 == b)) {
+        *ok = !*ok;
 
-            *ok = !*ok;
-        }
-
-        //  * Conditional 02
-        if (!*aTurn && Contains(prev, Beta, base->b_length) &&
-            c == a + 1 && (d == b || d == b + 1 || d + 1 == b)) {
-
-            *ok = !*ok;
-        }
-
-        //  * Conditional 03
+        //  * 03: Player A moves to a free tile.
         if (*ok && *aTurn && Contains(next, Free, base->f_length)) {
 
             if (Contains(prev, Alpha, base->a_length))
@@ -119,7 +114,7 @@
             *ok = !*ok;
         }
 
-        //  * Conditional 04
+        //  * 04: Player B moves to a free tile.
         if (*ok && !*aTurn && Contains(next, Free, base->f_length)) {
 
             if (Contains(prev, Beta, base->b_length)) 
@@ -129,14 +124,15 @@
             *ok = !*ok;
         }
 
-        //  * Conditional 05
+        //  * 05: Player A cannot eat since it is not on a white tile.
         if (*ok && *aTurn && Contains(next, Beta, base->b_length) && 
             !Contains(next, base->arr_s, base->s_length)) {
 
             *ok = !*ok;
+            printf(KRED "You cannot eat since it is not on a white tile.\n" KRST);
         }
 
-        //  * Conditional 06
+        //  * 06: Player A moves to a tile occupied by Player B.
         if (*ok && *aTurn && Contains(next, Beta, base->b_length) && 
             Contains(next, base->arr_s, base->s_length)) {
 
@@ -145,18 +141,21 @@
                 Remove(prev, Alpha, &base->a_length, base->p_length);
             if (!Contains(next, Alpha, base->a_length))
                 Add(next, Alpha, &base->a_length, base->p_length);
+
             *aTurn = !*aTurn;
             *ok = !*ok;
+            printf(KYEL "Player B's tile in [%d, %d] has been eaten.\n" KRST, c, d);
         }
 
-        //  * Conditional 07
+        //  * 07: Player B cannot eat since it is not on a white tile
         if (*ok && !*aTurn && Contains(next, Alpha, base->a_length) && 
             !Contains(next, base->arr_s, base->s_length)) {
 
             *ok = !*ok;
+            printf(KRED "You cannot eat since it is not on a white tile.\n" KRST);
         }
 
-        //  * Conditional 08
+        //  * 08: Player B moves to a tile occupied by Player A.
         if (*ok && !*aTurn && Contains(next, Alpha, base->a_length) && 
             Contains(next, base->arr_s, base->s_length)) {
 
@@ -165,56 +164,73 @@
                 Remove(prev, Beta, &base->b_length, base->p_length);
             if (!Contains(next, Beta, base->b_length))
                 Add(next, Beta, &base->b_length, base->p_length);
+
             *aTurn = !*aTurn;
             *ok = !*ok;
+            printf(KYEL "Player A's tile in [%d, %d] has been eaten.\n" KRST, c, d);
         }
+
+        fflush(stdin);
+        getchar();
     }
 
-    bool Subset(intp* x, intp* y, int x_len, int y_len) {
+    bool Subset(intp* Main, intp* Compare, int x_len, int y_len) {
 
-        // for (int i = 0; i < x_len; i++) {
-        // for (int j = 0; j < y_len; j++) {
+        for (int i = 0; i < x_len; i++) {
+            if (!Contains(Main[i], Compare, y_len))
+                return false;
+        }
+        return true;
+    }
 
-        //     if (x[i].x == y[j].x && x[i].y == y[j].y)
-        //         break;
-        //     if (j == y_len)
-        //         return false;
-        // }};
+    bool FullRow(intp* Main, int len, int row) {
+            
+        for (int i = 0; i < len; i++) {
+            if (Main[i].x != row)
+                return false;
+        }
+        return true;
+    }
 
-        // return true;
+    bool CheckSide(intp* Main, int len, int side) {
 
+        for (int i = 0; i < len; i++) {
+            if (Main[i].x == side) 
+                return true;
+        }
         return false;
     }
 
     char GameOver(bool* over, intp* Alpha, intp* Beta, ints base) {
 
-        if ((base.a_length > 0 && base.b_length > 0)
-        && !Subset(Alpha, base.arr_y, base.a_length, base.y_length)
-        && !Subset(Beta, base.arr_e, base.b_length, base.e_length))
-            return '/';
-        
-        *over = true;
-        char result;
+        if (FullRow(Beta, base.b_length, RLEN) || 
+            FullRow(Alpha, base.a_length, 1)) {
 
-        if (base.b_length == 0 || Subset(Alpha, base.arr_y, base.a_length, base.y_length)) {
-            result = 'A';
-        } else if (base.a_length == 0 || Subset(Beta, base.arr_e, base.b_length, base.e_length)) {
-            result = 'B';
+            *over = true;
+            return 'T';
         }
-        return result;
+
+        if (CheckSide(Alpha, base.a_length, 1) && 
+            CheckSide(Beta, base.b_length, RLEN)) {
+
+            *over = true;
+            return 'T';
+        }
+
+        if (base.b_length == 0 || 
+            Subset(Alpha, base.arr_y, base.a_length, base.y_length)) {
+
+            *over = true;
+            return 'A';
+
+        } else if (base.a_length == 0 || 
+            Subset(Beta, base.arr_e, base.b_length, base.e_length)) {
+            
+            *over = true;
+            return 'B';
+
+        } else {
+            return '/';
+        }
+
     }
-
-    void Freer(intp* Alpha, intp* Beta, intp* Free, ints* base) {
-        
-        free(Alpha);
-        free(Beta);
-        free(Free);
-
-        free(base->arr_r);
-        free(base->arr_c);
-        free(base->arr_p);
-        free(base->arr_s);
-        free(base->arr_y);
-        free(base->arr_e);
-    }
-
