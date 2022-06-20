@@ -18,7 +18,7 @@
     #define NBMD "\u2534"
     #define NALL "\u253c"
 
-    // ANSI Escape Sequences (Colors)
+    // ANSI Escape Sequences (Light Colors)
     #define LBLK  "\x1B[30;1m"
     #define LRED  "\x1B[31;1m"
     #define LGRN  "\x1B[32;1m"
@@ -28,6 +28,7 @@
     #define LCYN  "\x1B[36;1m"
     #define LWHT  "\x1B[37;1m"
 
+    // ANSI Escape Sequences (Dark Colors)
     #define KBLK  "\x1B[30m"
     #define KRED  "\x1B[31m"
     #define KGRN  "\x1B[32m"
@@ -37,21 +38,21 @@
     #define KCYN  "\x1B[36m"
     #define KWHT  "\x1B[37m"
 
+    // ANSI Escape Sequences (Text Properties and Reset)
     #define HBLD  "\x1B[1m"
     #define HUND  "\x1B[4m"
     #define HRVS  "\x1B[7m"
-
     #define KRST  "\x1B[0m"
+
+    // Default Preferences
+    int BT = 1;
+    int DF = 1;
+    int CA = 1;
 
     // Pair Structure
     typedef struct intp {
         int x; int y; int p;
     } intp;
-
-    // Native True/False
-    typedef enum { 
-        false = 0, true = !false
-    } bool;
 
     // Set Container Structure
     typedef struct ints {
@@ -74,16 +75,36 @@
         int m_length;
     } ints;
 
-    //  * Function that accepts an "ints" structure and fills the 
-    //  * elements with its corresponding values using constants. 
+
+
+    /*  
+        * Clears the terminal window.
+    */
+    void clrscr() {
+        #ifdef _WIN32
+            system("cls"); 
+        #else
+            system("clear");
+        #endif
+    }
+
+    /*  
+        * Function that accepts an "ints" structure and fills the 
+        * elements with its corresponding values by modifying
+        * constants with a specific constraint.
+        @param base - The master structure to be filled.
+    */
     void Fill(ints *base) {
         
+        // Initialize set [R]
         for (int i = 1; i <= RLEN; i++)
             base->arr_r[i-1] = i;
         
+        // Initialize set [C]
         for (int i = 1; i <= CLEN; i++)
             base->arr_c[i-1] = i;
 
+        // Initialize set [P]
         base->p_length = RLEN * CLEN;
         for (int i = 0; i < RLEN; i++) {
             for (int j = 0; j < CLEN; j++) {
@@ -92,6 +113,7 @@
             }
         }
 
+        // Initialize set [S]
         base->s_length = ceil((double)RLEN * CLEN / 2);
         for (int i = 0, j = 0; i <= RLEN * CLEN; i++) {
             if (base->arr_p[i].x % 2 == base->arr_p[i].y % 2) {
@@ -101,12 +123,14 @@
             }
         }
 
+        // Initialize set [Y]
         base->y_length = ceil((double)CLEN / 2 * YLIM);
         for (int i = 0; base->arr_s[i].x <= YLIM; i++) {
             base->arr_y[i].x = base->arr_s[i].x;
             base->arr_y[i].y = base->arr_s[i].y;
         }
 
+        // Initialize set [E]
         base->e_length = ceil((double)CLEN / 2 * (RLEN + 1 - ELIM));
         for (int i = 0, j = base->s_length - 1; base->arr_s[j].x >= ELIM; i++, j--) {
             base->arr_e[base->e_length-1-i].x = base->arr_s[j].x;
