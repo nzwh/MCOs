@@ -16,6 +16,73 @@
     }
 
     /*  
+        * Prints the preferences menu, to change global variables.
+        @param options[][] - List of menu options to choose from
+        @param count - Number of options to choose from
+        @param focus - The current option selected
+    */
+    void Preferences(char options[][40], int count, int focus) {
+
+        clrscr();
+        int loop = true;
+
+        // Loop and print until user selects exit
+        while (loop) {
+            
+            // Print the menu
+            clrscr();
+            printf("\n\n\t%s\n\n", LRED "Press [Enter] on an option to change it." KRST);
+            fflush(stdout);
+
+            for (int i = 0; i < count; i++) {
+                if (i == focus - 1) {
+                    printf(LBLU "\t-> %s\n" KRST, options[i]);
+                } else {
+                    printf("\t   %s\n", options[i]);
+                }
+            }
+
+            printf("\n\tPress [W] and [S] to navigate. Select [Exit] to return to the main menu.\n");
+            printf("\033[H");
+
+            // Get the user's input
+            char t = _getch();
+            fflush(stdin);
+            // Handle user input
+            if (t == '\r') {
+                loop = false;
+            } else if (t == 'w' || t == 'W') {
+                if (focus > 1) focus--;
+            } else if (t == 's' || t == 'S') {
+                if (focus < count) focus++;
+            }
+        }  
+
+        // Based on the user's input, change global variables and reprint the menu
+        switch (focus) {
+            case 1:
+                BT = !BT;
+                !BT ? strcpy(options[0], "Background Type: ASCII") : 
+                    strcpy(options[0], "Background Type: Unicode");
+                Preferences(options, count, focus);
+                break;
+            case 2:
+                DF = !DF;
+                !DF ? strcpy(options[1], "Default Starting Player: Beta") :
+                    strcpy(options[1], "Default Starting Player: Alpha");
+                printf("%s", options[1]);
+                Preferences(options, count, focus);
+                break;
+            case 3:
+                CA = !CA;
+                !CA ? strcpy(options[2], "Clear Background After Move: No") :
+                    strcpy(options[2], "Clear Background After Move: Yes");
+                Preferences(options, count, focus);
+                break;
+        }
+    }
+
+    /*  
         * Prints a divider based on set parameters.
         @param edge - Character to use as an edge
         @param fill - Character to use as a fill
@@ -106,73 +173,6 @@
     }
 
     /*  
-        * Prints the preferences menu, to change global variables.
-        @param options[][] - List of menu options to choose from
-        @param count - Number of options to choose from
-        @param focus - The current option selected
-    */
-    void Preferences(char options[][40], int count, int focus) {
-
-        clrscr();
-        int loop = true;
-
-        // Loop and print until user selects exit
-        while (loop) {
-            
-            // Print the menu
-            clrscr();
-            printf("\n\n\t%s\n\n", LRED "Press [Enter] on an option to change it." KRST);
-            fflush(stdout);
-
-            for (int i = 0; i < count; i++) {
-                if (i == focus - 1) {
-                    printf(LBLU "\t-> %s\n" KRST, options[i]);
-                } else {
-                    printf("\t   %s\n", options[i]);
-                }
-            }
-
-            printf("\n\tPress [W] and [S] to navigate. Select [Exit] to return to the main menu.\n");
-            printf("\033[H");
-
-            // Get the user's input
-            char t = _getch();
-            fflush(stdin);
-            // Handle user input
-            if (t == '\r') {
-                loop = false;
-            } else if (t == 'w' || t == 'W') {
-                if (focus > 1) focus--;
-            } else if (t == 's' || t == 'S') {
-                if (focus < count) focus++;
-            }
-        }  
-
-        // Based on the user's input, change global variables and reprint the menu
-        switch (focus) {
-            case 1:
-                BT = !BT;
-                !BT ? strcpy(options[0], "Background Type: ASCII") : 
-                    strcpy(options[0], "Background Type: Unicode");
-                Preferences(options, count, focus);
-                break;
-            case 2:
-                DF = !DF;
-                !DF ? strcpy(options[1], "Default Starting Player: Beta") :
-                    strcpy(options[1], "Default Starting Player: Alpha");
-                printf("%s", options[1]);
-                Preferences(options, count, focus);
-                break;
-            case 3:
-                CA = !CA;
-                !CA ? strcpy(options[2], "Clear Background After Move: No") :
-                    strcpy(options[2], "Clear Background After Move: Yes");
-                Preferences(options, count, focus);
-                break;
-        }
-    }
-
-    /*  
         * Prints the main menu. This will be the first screen the user sees.
     */
     void PrintMenu() {
@@ -231,7 +231,7 @@
                 Typewriter(30000, (char*)("\tOtherwise, they aren't allowed.\n\n"));
                 Typewriter(30000, (char*)("\t[>] A player wins if they manage to eat all of the opponent's players,\n"));
                 Typewriter(30000, (char*)("\tor if they manage to place all their players on the same zigzag pattern\n\ton the other side of the board.\n\n"));
-                Typewriter(30000, (char*)("\t[>] A tie occurs if no player is able to win due to limitations of the movement.\n\n"));
+                Typewriter(30000, (char*)("\t[>] A tie occurs if no player is able to win due to constraints.\n\n"));
                 Typewriter(30000, (char*)("\t[>] To play, select the coordinate of the piece you would like to move.\n"));
                 Typewriter(30000, (char*)("\tIf it's valid, select the coordinate where you would like the piece to go to.\n\n"));
                 Typewriter(30000, (char*)(LBLU "\t[>>>] May the best player win.\n" KRST));

@@ -17,7 +17,7 @@
     int main(void) {
 
         // Set the console code page to allow ANSI Escape Sequences and Unicodes
-        system("chcp 65001");
+        esqncs();
         clrscr();
 
         // Print the menu

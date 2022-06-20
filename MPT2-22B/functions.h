@@ -312,18 +312,19 @@
     char GameOver(bool* over, intp* Alpha, intp* Beta, ints base) {
         
         // Alpha win condition
-        if (base.b_length == 0 || 
-            Subset(Alpha, base.arr_y, base.a_length, base.y_length)) {
+        if (base.b_length == 0 || (base.a_length > 0 &&
+            Subset(Alpha, base.arr_y, base.a_length, base.y_length))) {
 
             *over = true;
             return 'A';
 
         // Beta win condition
-        } else if (base.a_length == 0 || 
-            Subset(Beta, base.arr_e, base.b_length, base.e_length)) {
+        } else if (base.a_length == 0 || (base.b_length > 0 &&
+            Subset(Beta, base.arr_e, base.b_length, base.e_length))) {
             
             *over = true;
             return 'B';
+        }
 
         // If one player's pieces are all in the opposite row
         if (FullRow(Beta, base.b_length, RLEN) || 
@@ -335,7 +336,7 @@
 
         // If both players have one piece in the opposite row, 
         // and both pieces are not in the set S
-        if (CheckSide(Alpha, base.a_length, 1) && 
+        if (CheckSide(Alpha, base.a_length, 1) &&
             CheckSide(Beta, base.b_length, RLEN)) {
 
             *over = true;
@@ -343,7 +344,5 @@
         }
 
         // No one wins, continue the game
-        } else {
-            return '/';
-        }
+        return '/';
     }

@@ -88,6 +88,14 @@
         #endif
     }
 
+    void esqncs() {
+        #ifdef _WIN32
+            system("chcp 65001"); 
+        #else
+            system("clear");
+        #endif
+    }
+
     /*  
         * Function that accepts an "ints" structure and fills the 
         * elements with its corresponding values by modifying
