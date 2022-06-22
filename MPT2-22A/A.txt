@@ -1,0 +1,19 @@
+Cebuano: mahal
+Chinese: gui
+English: expensive
+Tagalog: mahal
+Kapampangan: mal
+
+Cebuano: gugma
+Chinese: ai
+English: love
+Hiligaynon: gugma
+Spanish: amor
+Tagalog: mahal
+
+English: hello
+Korean: annyeonghaseyo
+Japanese: arigatou
+Tagalog: kumusta
+Chinese: nihao
+
