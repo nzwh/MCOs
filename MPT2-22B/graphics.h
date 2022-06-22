@@ -1,8 +1,8 @@
 
     /*  
-        * Prints a string with a typewriter effect.
-        @param delay - Time in milliseconds to wait
-        @param s[] - String to print into
+        / Prints a string with a typewriter effect.
+        - @param delay: Time in milliseconds to wait.
+        - @param s[]: String to print into.
     */
     void Typewriter(int delay, char s[]) {
 
@@ -16,24 +16,25 @@
     }
 
     /*  
-        * Prints the preferences menu, to change global variables.
-        @param options[][] - List of menu options to choose from
-        @param count - Number of options to choose from
-        @param focus - The current option selected
+        / Prints the preferences menu, to change global variables.
+        - @param options[][]: List of menu options to choose from.
+        - @param count: Number of options to choose from.
+        - @param focus: The current option selected.
     */
     void Preferences(char options[][40], int count, int focus) {
 
         clrscr();
-        int loop = true;
+        bool loop = true;
 
-        // Loop and print until user selects exit
+        //- Loop and print until user selects exit
         while (loop) {
             
-            // Print the menu
+            //- Print the menu
             clrscr();
             printf("\n\n\t%s\n\n", LRED "Press [Enter] on an option to change it." KRST);
             fflush(stdout);
 
+            //- Print options
             for (int i = 0; i < count; i++) {
                 if (i == focus - 1) {
                     printf(LBLU "\t-> %s\n" KRST, options[i]);
@@ -42,13 +43,15 @@
                 }
             }
 
+            //- Prompt help
             printf("\n\tPress [W] and [S] to navigate. Select [Exit] to return to the main menu.\n");
             printf("\033[H");
 
-            // Get the user's input
+            //- Get the user's input
             char t = _getch();
             fflush(stdin);
-            // Handle user input
+
+            //- Handle user input
             if (t == '\r') {
                 loop = false;
             } else if (t == 'w' || t == 'W') {
@@ -58,7 +61,7 @@
             }
         }  
 
-        // Based on the user's input, change global variables and reprint the menu
+        //- Based on the user's input, change global variables and reprint the menu
         switch (focus) {
             case 1:
                 BT = !BT;
@@ -83,50 +86,52 @@
     }
 
     /*  
-        * Prints a divider based on set parameters.
-        @param edge - Character to use as an edge
-        @param fill - Character to use as a fill
-        @param length - Width of each divider cell
-        @param iter - Amount of cells to print
-        @param nl - Prints a newline if true
+        / Prints a divider based on set parameters.
+        - @param edge: Character to use as an edge.
+        - @param fill: Character to use as a fill.
+        - @param length: Width of each divider cell.
+        - @param iter: Amount of cells to print.
+        - @param nl: Prints a newline if true.
     */
     void PrintDivider(char* edge, char* fill, int length, int iter, int nl) {
 
+        //- Print cells
         for (int i = 0; i < iter; i++) {
             printf("%s", edge);
             for (int i = 0; i < length; i++) 
                 printf("%s", fill);
         }
 
+        //- Print end
         printf("%s", edge);
         printf(nl ? "\n" : "   ");
     }
 
     /*  
-        * Prints the main board, given dimensions and occupied cells.
-        @param r - Length of the board
-        @param c - Width of the board
-        @param Pieces - Array of ccordinates of occupied cells
-        @param p_length - Length of Pieces
+        / Prints the main board, given dimensions and occupied cells.
+        - @param r: Length of the board.
+        - @param c: Width of the board.
+        - @param Pieces: Array of ccordinates of occupied cells.
+        - @param p_length: Length of Pieces.
     */
     void PrintBoard(int r, int c, intp* Pieces, int p_length) {
         
-        // Print the topmost divider
+        //- Print the topmost divider
         printf("\t");
         PrintDivider(BT ? (char*)NBMU : (char*)"-", BT ? (char*)NHFT : (char*)"-", 3, CLEN, false);
         PrintDivider(BT ? (char*)NBMU : (char*)"-", BT ? (char*)NHFT : (char*)"-", 7, CLEN, true);
 
-        // Loop through the board
+        //- Loop through the board
         for (int i = 0, ctr = 0; i < r; i++) {
             
-            // Print each row
+            //- Print each row
             printf("\t");
             for (int x = 0; x < 2; x++) {
                 for (int j = 0; j < c; j++) {
 
                     printf("%s", BT ? NVFT : "|");
 
-                    // Print the content of the cell based on Pieces
+                    //- Print the content of the cell based on Pieces
                     if (ctr < p_length && Pieces[ctr].x == i + 1 && Pieces[ctr].y == j + 1) {
                         if (Pieces[ctr].p == 0) {
                             if (x == 1) {
@@ -143,7 +148,7 @@
                         }
                         ctr++;
 
-                    // If there are no occupants, print a blank cell
+                    //- If there are no occupants, print a blank cell
                     } else {
                         if (x == 1) {
                             printf(" [%d,%d] ", i + 1, j + 1);
@@ -158,7 +163,7 @@
                 printf("%s   ", BT ? NVFT : "|");
             }
 
-            // Print a divider for each row
+            //- Print a divider for each row
             printf("\n\t");
             if (i + 1 < r) {
                 PrintDivider(BT ? (char*)NALL : (char*)"-", BT ? (char*)NHFT : (char*)"-", 3, CLEN, false);
@@ -167,13 +172,13 @@
 
         }
 
-        // Print the bottommost divider
+        //- Print the bottommost divider
         PrintDivider(BT ? (char*)NBMD : (char*)"-", BT ? (char*)NHFT : (char*)"-", 3, CLEN, false);
         PrintDivider(BT ? (char*)NBMD : (char*)"-", BT ? (char*)NHFT : (char*)"-", 7, CLEN, true);
     }
 
     /*  
-        * Prints the main menu. This will be the first screen the user sees.
+        / Prints the main menu. This will be the first screen the user sees.
     */
     void PrintMenu() {
 
@@ -181,41 +186,39 @@
         clrscr();
         usleep(900000);
 
-        // Print the "Checkershift" Logo
+        //- Print the "Checkershift" Logo
         printf("\n\n");
         puts("\t" LCYN NBMU NHFT NCUR NBMU " " NBMU NBMU NHFT NCUR NBMU NHFT NCUR NBMU " " NBMU NBMU NHFT NCUR NBMU NHFT NCUR NCUL NHFT NCUR NBMU " " NBMU NBMU NBMU NHFT NCUR NCUL NBMU NCUR KRST);
         puts("\t" KBLU NVFT "  " NBMR NHFT NBML NBMR NBML " " NVFT "  " NBMR "< " NBMR NBML " " NBMR "\\" NCDR NCDL NHFT NCUR NBMR NHFT NBML NVFT NBMR NBML "  " NVFT KRST);
         puts("\t" LMAG NBMD NHFT NCDR NBMD " " NBMD NBMD NHFT NCDR NBMD NHFT NCDR NBMD " " NBMD NBMD NHFT NCDR NBMD " " NBMD NCDL NHFT NCDR NBMD " " NBMD NBMD NBMD "   " NBMD KRST);
 
-        // Print the introductory message
+        //- Print the introductory message
         Typewriter(30000, (char*)(LRED "\n\tWelcome to Checkershift," KRST));
         Typewriter(30000, (char*)(" a modified game of checkers,\n"));
         Typewriter(30000, (char*)("\twhere pieces behave like chess pawns.\n"));
         Typewriter(30000, (char*)(LRED "\n\tEnter an option to get started." KRST));
 
-        // Print the options
+        //- Print the options
         printf("\n\n");
         printf("\t[1] Enter Game\n");
         printf("\t[2] Instructions\n");
         printf("\t[3] Preferences\n");
         printf("\t[4] Quit\n");
 
-        // Get the user's input
-        printf("\n");
-        printf(LBLU "\t[>] ");
-        // Handle the user's input
+        //- Handle the user's input
+        printf(LBLU "\n\t[>] ");
         scanf("%d", &opt);
         fflush(stdin);
 
-        // Based on the user's input, call the appropriate function
+        //- Based on the user's input, call the appropriate function
         printf(KRST);
         switch (opt) {
-            case 1:     // Start game immediately
+            case 1:     //- Start game immediately
 
                 clrscr();
                 break;
 
-            case 2:     // Print instructions, then return to the main menu
+            case 2:     //- Print instructions, then return to the main menu
 
                 clrscr();
                 printf("\n\n");
@@ -242,7 +245,7 @@
                 PrintMenu();
                 break;
                 
-            case 3: {   // Print preferences, then return to the main menu
+            case 3: {   //- Print preferences, then return to the main menu
                 
                 clrscr();
                 int count = 4, focus = 1;
@@ -257,7 +260,7 @@
                 PrintMenu();
                 break;
 
-            } case 4:   // Exit the game immediately
+            } case 4:   //- Exit the game immediately
 
                 clrscr();
                 exit(0);
