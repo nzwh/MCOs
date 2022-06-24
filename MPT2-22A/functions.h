@@ -13,18 +13,23 @@
         //- Print menu.
         while (loop) {
 
-            printf("\n%s\n\n", title);
+            printf("\n\n");
+            puts(LCYN "\t" NBMU NHFT NBMU NCUL NCUR NCUL NCUL NBMU NCUR NBMU NHFT NCUR NBMU NHFT NBMU NCUL NCUR NCUL NCUL NHFT NCUR NBMU " " " " NBMU NHFT NBMU NCUL NBMU NCUR NBMU NHFT NBMU KRST);
+            puts(KBLU "\t" NBMR NBML " " NVFT NVFT NVFT " " NVFT " " NBMR "\\" NCDR NBMR NHFT NBML NVFT NVFT NVFT NCDL NHFT NCUR NVFT " " NBMU NBMR NHFT NBML " " NVFT " " NBMR NBML " " KRST);
+            puts(LMAG "\t" NBMD NHFT NBMD NCDR NCDL NCDR " " NBMD " " NBMD " " NBMD NBMD " " NBMD NCDR NCDL NCDR NCDL NHFT NCDR NBMD NHFT NBMD NBMD " " NBMD " " NBMD " " NBMD NHFT NBMD KRST); 
+
+            printf(LRED "\n\t%s\n\n" KRST, title);
             fflush(stdout);
 
             for (int i = 0; i < options; i++) {
                 if (i == focus - 1) {
-                    printf("-> %s\n", options_names[i]);
+                    printf(LBLU "\t>  %s\n" KRST, options_names[i]);
                 } else {
-                    printf("   %s\n", options_names[i]);
+                    printf("\t   %s\n", options_names[i]);
                 }
             }
 
-            printf("\nPress [W] and [S] to navigate. Press [Enter] to continue.\n");
+            printf(LBLK "\n\tPress [W] and [S] to navigate. Press [Enter] to continue.\n" KRST);
             printf("\033[H");
 
             char t = tolower(getch());
@@ -42,6 +47,17 @@
         }
 
         return focus;
+    }
+
+    /*
+        / Capitalizes the first letter of a string.
+        - @str: String to capitalize.
+        - @return: Capitalized string.
+    */
+    char* Capitalize(char* str) {
+
+        str[0] = toupper(str[0]);
+        return str;
     }
 
     /* 
@@ -83,114 +99,6 @@
     }
 
     /* 
-        / Translates input string into a given language.
-        - @container: The container to store everything.
-    */
-    void Translation(Container *container) {
-        
-        int choice = 0;
-
-        do {
-            clrscr();
-            printf("\n\n");
-
-            //- Input the initial language
-            String language;
-            fputs("\tEnter your desired language: ", stdout);
-            fgets(language, MAX_INPUT, stdin);
-
-            strtok(language, "\n");
-            fflush(stdin);
-
-            //- Input the desired translation
-            String translation;
-            fputs("\tEnter the language to translate to: ", stdout);
-            fgets(translation, MAX_INPUT, stdin);
-
-            strtok(translation, "\n");
-            fflush(stdin);
-
-            //- Return all entries with the given language and translation.
-            Container Results = SearchLanguage(container, language);
-            
-            Entry AllWords[MAX_ENTRY];
-            int all_length = 0;
-
-            //- Add all entries that correspond to the given language.
-            for (int i = 0; i < Results.count; i++) { // all entries
-                for (int j = 0; j < Results.base[i].length; j++) { // all blocks
-                    if (strcmp(Results.base[i].block[j].language, language) == 0) {
-                        AllWords[all_length++] = Results.base[i];
-                    }
-                }
-            }
-
-            //- Prompt for input
-            printf("\n\tEnter your sentence: \t");
-            char* tokens[MAX_TOKENS], input[MAX_INPUT + 1];
-            int length = 0;
-
-            fgets(input, MAX_INPUT, stdin);
-            Tokenization(input, tokens, &length, ".,?!");
-
-            bool check = false, check_again = false;
-            int entry, index;
-            
-            //- Translate per word in the array
-            printf("\n\tOutput [%d words]: \n\t", length);
-            for (int i = 0; i < length; i++, check = false, check_again = false) {
-
-                //- Checks if the current word is in the AllWords array
-                for (int j = 0; j < all_length; j++) {
-                    for (int k = 0; k < AllWords[j].length; k++) {
-                        if (strcmp(tokens[i], AllWords[j].block[k].translation) == 0) {
-                            check = true;
-                            entry = j;
-                        }
-                    }
-                }
-
-                //- If the word is in the AllWords array, find its translation
-                if (check) {
-                    for (int i = 0; i < AllWords[entry].length && !check_again; i++) {
-                        if (strcmp(translation, AllWords[entry].block[i].language) == 0) {
-                            check_again = true;
-                            index = i;
-                        }
-                    }
-                }
-
-                //- If the word is in the AllWords array and has a translation, print it
-                if (check_again) {
-                    printf("%s ", AllWords[entry].block[index].translation);
-                } else {
-                    printf("%s ", tokens[i]);
-                }
-
-                fflush(stdout);
-            }
-
-            //- Prompt again
-            printf("\n\n");
-            fprintf(stdout, "\n\tTranslation complete. Would you like to translate again?\n");
-            fprintf(stdout, "\t[1] Yes [0] No: ");
-
-            fflush(stdin);
-            //- Recursion to loop
-            fscanf(stdin, "%d", &choice);
-            fflush(stdin);
-    
-        } while (choice != 0);
-
-        //- Return to main menu
-        fprintf(stdout, "\n\n\tReturning to the main menu.\n");
-        fprintf(stdout, "\tPress [Enter] to continue.\n");
-        getchar();
-
-        StartMenu(container);
-    }
-
-    /* 
         / Removes non-alphabetic characters from a string
         / and turns them all into lowercase.
         - @input: String to be modified.
@@ -215,13 +123,13 @@
     void ParseInput(char* str, char* message, int limit) {
         
         do { 
-            fputs(message, stdout);
+            printf(message);
             fgets(str, MAX_INPUT, stdin);
             fflush(stdout);
 
             Alphalower(str);
             if (strlen(str) < 1 || strlen(str) > limit) 
-                printf("\t[>] Invalid input. Must be between 1 and %d characters.\n", limit);
+                printf(LRED "\t[>] Invalid input. Must be between 1 and %d characters.\n\n" KRST, limit);
 
         } while (strlen(str) < 1 || strlen(str) > limit);
     }
@@ -243,7 +151,11 @@
         - @entry: The entry to sort.
     */
     void Intrasort(Entry* entry, int length) {
-            
+
+        //- Don't sort anymore if the length is 1 or less
+        if (length <= 1) return;
+
+        //- Sort the blocks by language
         for (int i = 0; i < length; i++) {
             for (int j = 0; j < length - 1; j++) {
                 if (strcmp(entry->block[j].language, entry->block[j + 1].language) > 0) 
@@ -271,6 +183,9 @@
         - @length: The length of the "Entries[]"" array.
     */
     void Intersort(Entry* Entries, int length) {
+        
+        //- Don't sort anymore if the length is 1 or less
+        if (length <= 1) return;
 
         //- Declare temporary variables
         Entry Extract[length], Discard[length], Current;
@@ -371,8 +286,8 @@
         FoundEntries.count = 0;
 
         //- Look for matches
-        for (int i = 0; i < container->count; i++) { // loop through all entries
-            for (int j = 0; j < container->base[i].length; j++) { // loop through all blocks
+        for (int i = 0; i < container->count; i++) {
+            for (int j = 0; j < container->base[i].length; j++) {
 
                 if (strcmp(container->base[i].block[j].language, language) == 0) {
                     FoundEntries.base[FoundEntries.count++] = container->base[i];
@@ -397,11 +312,150 @@
     */
     void PrintEntry(Entry entry, int length) {
 
+        //- Grab the current entry based on the page
+        printf(LYEL "\n\tPanel: [Displaying Current Page].\n\n" KRST);
+
         //- Loop and display all blocks within the entry
-        for (int i = 0; i < length; i++) {
-            printf("\t[%02d] [%s: %s]\n", i + 1,
-                entry.block[i].language, entry.block[i].translation);
+        for (int i = 0; i < entry.length; i++) {
+            printf("\t[%02d] | %s%s%s: %s\n", i + 1, LYEL,
+                Capitalize(entry.block[i].language), KRST, entry.block[i].translation);
             fflush(stdout);
         }
     }
+
+    /* 
+        / Check if a block already exists in the entry.
+        - @entry: The entry to check.
+        - @data: The block to look for.
+        - @return "true": if the block exists, "false" if not.
+    */
+    bool Exists(Entry entry, Data data) {
+            
+        for (int i = 0; i < entry.length; i++) {
+            if (strcmp(entry.block[i].language, data.language) == 0 &&
+                strcmp(entry.block[i].translation, data.translation) == 0)
+                return true;
+        }
+        return false;
+    }
+
+    /* 
+        / Translates input string into a given language.
+        - @container: The container to store everything.
+    */
+    void Translation(Container *container) {
+
+        //- Don't allow if there are no entries
+        if (container->count <= 0) {
+            printf(LRED "\n\n\tNo entries found in the database." KRST);
+            printf(LBLK "\n\tPress [Enter] to return back to Start Menu." KRST);
+            getchar();
+
+            StartMenu(container);
+            return;
+        }
         
+        int choice = 0;
+
+        do {
+            clrscr();
+            printf("\n\n");
+            printf(LRED "\tPanel: [Translate Paragraph]\n" KRST);
+            printf("\tTranslate a paragraph to a given language.\n\n\n");
+
+            //- Input the initial language
+            String language, translation;
+            ParseInput(language, KRST "\tEnter the initial language: " LBLU, MAX_CHARS - 1);
+            ParseInput(translation, KRST "\tEnter the translation language: " LBLU, MAX_CHARS - 1);
+
+            //- Return all entries with the given language and translation.
+            Container Results = SearchLanguage(container, language);
+            
+            Entry AllWords[MAX_ENTRY];
+            int all_length = 0;
+
+            //- Add all entries that correspond to the given language.
+            for (int i = 0; i < Results.count; i++) {
+                for (int j = 0; j < Results.base[i].length; j++) {
+
+                    if (strcmp(Results.base[i].block[j].language, language) == 0) {
+                        AllWords[all_length++] = Results.base[i];
+                    }
+                }
+            }
+
+            if (all_length == 0) {
+                printf(LRED "\n\n\tNo entries matching [%s] in the database." KRST, language);
+                printf(LBLK "\n\tPress [Enter] to return back to Start Menu." KRST);
+                getchar();
+
+                StartMenu(container);
+                return;
+            }
+
+            //- Prompt for input
+            printf(LBLK "\n\tEnter your sentence: \n\t" LBLU);
+            char* tokens[MAX_TOKENS], input[MAX_INPUT + 1];
+            int length = 0;
+
+            fgets(input, MAX_INPUT, stdin);
+            Tokenization(input, tokens, &length, ".,?!");
+
+            bool check = false, check_again = false;
+            int entry, index;
+            
+            //- Translate per word in the array
+            printf(KRST "\n\tOutput [%d words]: \n\t" LBLU, length);
+            for (int i = 0; i < length; i++, check = false, check_again = false) {
+
+                //- Checks if the current word is in the AllWords array
+                for (int j = 0; j < all_length; j++) {
+                    for (int k = 0; k < AllWords[j].length; k++) {
+                        if (strcmp(tokens[i], AllWords[j].block[k].translation) == 0) {
+                            check = true;
+                            entry = j;
+                        }
+                    }
+                }
+
+                //- If the word is in the AllWords array, find its translation
+                if (check) {
+                    for (int i = 0; i < AllWords[entry].length && !check_again; i++) {
+                        if (strcmp(translation, AllWords[entry].block[i].language) == 0) {
+                            check_again = true;
+                            index = i;
+                        }
+                    }
+                }
+
+                //- If the word is in the AllWords array and has a translation, print it
+                if (check_again) {
+                    printf("%s ", AllWords[entry].block[index].translation);
+                } else {
+                    printf("%s ", tokens[i]);
+                }
+
+                fflush(stdout);
+            }
+
+            //- Prompt again
+            printf("\n\n");
+            printf(LYEL "\n\tTranslation complete.\n" KRST);
+            printf(LBLK "\n\tWould you like to translate again?\n" KRST);
+            printf("\t[1] Yes [0] No: \n\t[>] " LBLU);
+
+            //- Recursion to loop
+            scanf("%d", &choice);
+            fflush(stdin);
+
+            printf(KRST);
+    
+        } while (choice);
+
+        //- Return to main menu
+        printf(LBLK "\n\n\tReturning to the main menu.\n" KRST);
+        printf(LBLK "\tPress [Enter] to continue.\n" KRST);
+        getchar();
+
+        StartMenu(container);
+    }

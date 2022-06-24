@@ -15,12 +15,15 @@
     /// Main file
     int main(void) {
 
+        //- Prepare terminal
+        clrscr();
+        esqncs();
+        
         //- Initialize a new container
         Container container;
         container.count = 0;
         StartMenu(&container);
         
         //- Prevent abrupt termination
-        getchar();
         return 0;
     }
